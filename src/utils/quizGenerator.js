@@ -6,7 +6,8 @@
 
 async function callProxy() {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 25000);
+  // Server butuh ~40s saat AI upstream lambat; beri margin 50s
+  const timer = setTimeout(() => controller.abort(), 50000);
   try {
     const res = await fetch('/api/quiz', {
       method: 'POST',

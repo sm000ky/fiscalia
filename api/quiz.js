@@ -7,7 +7,7 @@
  */
 
 const UPSTREAM = 'https://sakithati.bond/v1/chat/completions';
-const MODEL = 'elf/laguna-s-2.1';
+const MODEL = 'elf/solar-pro4';
 
 const TOPICS = [
   'PPh 21 TER dan perhitungan gaji',
@@ -33,8 +33,8 @@ function shuffle(arr) {
 
 async function callUpstream(apiKey, systemPrompt, userPrompt) {
   const controller = new AbortController();
-  // Keep well under the 10s Hobby serverless limit; client retries instead.
-  const timer = setTimeout(() => controller.abort(), 8000);
+  // maxDuration=45s in vercel.json: upstream needs ~17-21s per batch
+  const timer = setTimeout(() => controller.abort(), 40000);
   try {
     const res = await fetch(UPSTREAM, {
       method: 'POST',
@@ -111,27 +111,36 @@ FORMAT OUTPUT:
 WAJIB return HANYA JSON array valid tanpa markdown/code block:
 [{"question":"...","options":["A","B","C","D"],"answerIndex":0,"explanation":"..."}]`;
 
-  const userPrompt = `Generate 10 soal pilihan ganda UNIK dengan kriteria:
+  const userPrompt = `Generate 5 soal pilihan ganda UNIK dengan kriteria:
 - Session ID: ${sessionId}
 - Timestamp: ${new Date().toISOString()}
 - Topik fokus: ${selectedTopics}
 - Variasi WAJIB: angka berbeda, kasus berbeda, konteks berbeda
-- Minimal 3 soal berupa real-world calculation scenario
+- Minimal 2 soal berupa real-world calculation scenario
 
 MULAI GENERATE SEKARANG (JSON array only):`;
 
-  // Try upstream ONCE (fast fail -> fallback). Client retries /api/quiz itself.
+  // Try upstream: batch A + batch B parallel (5+5 soal), toleransi 1 gagal.
   if (apiKey) {
     try {
-      const data = await callUpstream(apiKey, systemPrompt, userPrompt);
-      const questions = extractQuestions(data);
-      if (!Array.isArray(questions) || questions.length < 10) {
+      const settled = await Promise.allSettled([
+        callUpstream(apiKey, systemPrompt, userPrompt),
+        callUpstream(apiKey, systemPrompt, userPrompt),
+      ]);
+      const questions = settled.flatMap((s) => {
+        if (s.status !== 'fulfilled') return [];
+        try { return extractQuestions(s.value); } catch { return []; }
+      }).filter(valid);
+      if (questions.length < 5) {
         throw new Error('Not enough questions');
       }
-      questions.forEach((q, i) => {
-        if (!valid(q)) throw new Error(`Bad question at ${i}`);
+      // Top-up dari bank lokal agar client selalu terima 10 soal
+      const need = 10 - questions.length;
+      const topUp = need > 0 ? shuffle(FALLBACK).slice(0, need) : [];
+      return res.status(200).json({
+        source: topUp.length ? 'api+fallback' : 'api',
+        questions: [...questions.slice(0, 10), ...topUp],
       });
-      return res.status(200).json({ source: 'api', questions: questions.slice(0, 10) });
     } catch (err) {
       console.warn('Upstream failed, using fallback:', err?.message);
     }
