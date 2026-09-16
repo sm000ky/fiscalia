@@ -258,7 +258,7 @@ function App() {
             Dibuat dengan 💗 untuk pejuang pajak
           </p>
           <p className="text-xs text-[#c4b3d1] mt-1">
-            React + Vite • Soal AI fresh • Bisa offline
+            React + Vite • Soal fresh • Bisa offline
           </p>
         </div>
       </footer>

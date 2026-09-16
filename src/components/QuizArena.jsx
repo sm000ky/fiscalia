@@ -49,7 +49,7 @@ export default function QuizArena() {
       }
     } catch (error) {
       console.error('Failed to load quiz:', error)
-      alert('Yah soal lagi dimuat nih, coba lagi sebentar ya Darling 💕\n\n(Server lagi sibuk bikin soal AI yang seru!)')
+      alert('Yah soal lagi dimuat nih, coba lagi sebentar ya Darling 💕\n\n(Server lagi sibuk bikin soal yang seru!)')
       setGameState('menu')
     }
   }
