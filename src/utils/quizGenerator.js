@@ -13,9 +13,57 @@ const MODEL = 'claude-opus-4-8';
  */
 export async function fetchAutoQuiz() {
   const timestamp = Date.now()
-  const randomSeed = Math.floor(Math.random() * 10000)
+  const randomSeed = Math.floor(Math.random() * 100000)
+  const sessionId = `${timestamp}_${randomSeed}`
   
-  const systemPrompt = 'Kamu adalah pembuat soal akuntansi & perpajakan Indonesia (PPh 21 TER, PPN, PTKP, Rekonsiliasi Fiskal). Buatkan 10 soal pilihan ganda acak yang bervariasi. WAJIB kembalikan HANYA format JSON valid tanpa penjelasan markdown: [{"question":"...","options":["A","B","C","D"],"answerIndex":0,"explanation":"..."}]'
+  // Topic pool untuk variasi
+  const topics = [
+    'PPh 21 TER dan perhitungan gaji',
+    'PTKP dan status perkawinan',
+    'PPN dan PKP',
+    'Rekonsiliasi Fiskal (Beda Tetap & Waktu)',
+    'PPh Final UMKM PP 55/2022',
+    'Jurnal Akuntansi dasar',
+    'Laporan Keuangan',
+    'PPh Pasal 22, 23, 24, 25, 26',
+    'Metode penyusutan aktiva tetap',
+    'Kredit Pajak dan SPT Tahunan'
+  ]
+  
+  // Shuffle topics
+  const shuffledTopics = topics.sort(() => Math.random() - 0.5)
+  const selectedTopics = shuffledTopics.slice(0, 5).join(', ')
+  
+  const systemPrompt = `Kamu adalah expert pembuat soal akuntansi & perpajakan Indonesia untuk game edukasi TaxQuest RPG.
+
+ATURAN KETAT:
+1. Setiap request WAJIB generate soal BERBEDA dari sebelumnya
+2. Variasikan topik, angka, kasus, dan konteks
+3. Fokus pada topik: ${selectedTopics}
+4. Soal harus praktis, real-world scenario, bukan teori kering
+5. Hindari soal dengan pola berulang
+
+FORMAT OUTPUT:
+WAJIB return HANYA JSON array valid tanpa markdown/code block:
+[{"question":"...","options":["A","B","C","D"],"answerIndex":0,"explanation":"..."}]
+
+CONTOH VARIASI:
+- PPh 21: hitung gaji berbeda, status PTKP berbeda, bulan berbeda
+- PPN: kasus PKP, ekspor, impor, faktur pajak
+- Rekonsiliasi: kasus entertainment, natura, sumbangan, penyusutan
+- Real scenario: "PT ABC bayar gaji Rp X ke karyawan status K/2, hitunglah..."
+`
+
+  const userPrompt = `Generate 10 soal pilihan ganda UNIK dengan kriteria:
+- Session ID: ${sessionId}
+- Random seed: ${randomSeed}
+- Timestamp: ${new Date().toISOString()}
+- Topik fokus: ${selectedTopics}
+- Variasi WAJIB: angka berbeda, kasus berbeda, konteks berbeda
+- Tidak boleh soal template atau duplikat
+- Minimal 3 soal berupa real-world calculation scenario
+
+MULAI GENERATE SEKARANG (JSON array only):`
 
   try {
     const response = await fetch(API_ENDPOINT, {
@@ -33,11 +81,12 @@ export async function fetchAutoQuiz() {
           },
           {
             role: 'user',
-            content: `Generate 10 soal unik baru dengan seed acak: ${Math.random()}_${Date.now()}`
+            content: userPrompt
           }
         ],
-        temperature: 0.95,
-        max_tokens: 3000
+        temperature: 1.0, // Max creativity
+        max_tokens: 4000,
+        top_p: 0.95
       }),
       cache: 'no-store'
     });
