@@ -108,7 +108,7 @@ function App() {
                   </div>
                   <div className="grid grid-cols-3 gap-4 bg-purple-900/40 p-3 border-2 border-purple-500">
                     <div className="font-pixel text-yellow-400">Category C</div>
-                    <div>Annual > Rp 250 juta</div>
+                    <div>Annual &gt; Rp 250 juta</div>
                     <div className="text-right font-pixel neon-cyan">1% - 6%</div>
                   </div>
                 </div>
@@ -131,7 +131,7 @@ function App() {
                     <span className="font-pixel neon-pink">25%</span>
                   </div>
                   <div className="flex justify-between bg-cyan-900/40 p-3 border-2 border-cyan-600">
-                    <span>Layer 4: > Rp 500 juta</span>
+                    <span>Layer 4: &gt; Rp 500 juta</span>
                     <span className="font-pixel neon-pink">30%</span>
                   </div>
                 </div>

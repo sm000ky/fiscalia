@@ -5,7 +5,7 @@
 
 const API_ENDPOINT = 'https://sakithati.bond/v1/chat/completions';
 const API_KEY = 'elf-live-0f00da3f6da781df2a3887ca935d8407';
-const MODEL = 'elf/qwen3.8-flash';
+const MODEL = 'elf/laguna-s-2.1';
 
 /**
  * Fetch auto-generated quiz questions
