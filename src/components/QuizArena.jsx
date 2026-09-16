@@ -171,16 +171,9 @@ export default function QuizArena() {
 
           <button
             onClick={startQuest}
-            className="retro-button bg-gradient-to-r from-pink-600 to-purple-600 text-white px-8 py-4 font-pixel text-xl border-4 border-white hover:scale-105 transition-transform mb-3"
+            className="retro-button bg-gradient-to-r from-pink-600 to-purple-600 text-white px-8 py-4 font-pixel text-xl border-4 border-white hover:scale-105 transition-transform"
           >
-            START NEW QUEST
-          </button>
-          
-          <button
-            onClick={startQuest}
-            className="retro-button bg-gradient-to-r from-cyan-600 to-blue-600 text-white px-6 py-3 font-pixel text-sm border-4 border-cyan-300 hover:scale-105 transition-transform"
-          >
-            🔄 REFRESH QUEST BANK
+            🎮 START NEW QUEST
           </button>
         </div>
       </div>

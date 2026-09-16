@@ -62,8 +62,11 @@ CONTOH VARIASI:
 - Variasi WAJIB: angka berbeda, kasus berbeda, konteks berbeda
 - Tidak boleh soal template atau duplikat
 - Minimal 3 soal berupa real-world calculation scenario
+- PENTING: Jangan pernah generate soal yang sama dengan request sebelumnya
 
 MULAI GENERATE SEKARANG (JSON array only):`
+
+  console.log(`🎲 Quiz Request - SessionID: ${sessionId}, Topics: ${selectedTopics}`)
 
   try {
     const response = await fetch(API_ENDPOINT, {
@@ -119,7 +122,11 @@ MULAI GENERATE SEKARANG (JSON array only):`
       }
     });
     
+    // Log first 2 questions for debugging randomness
     console.log('✓ Fetched 10 fresh questions from API')
+    console.log('📋 Sample Q1:', questions[0].question.substring(0, 60) + '...')
+    console.log('📋 Sample Q2:', questions[1].question.substring(0, 60) + '...')
+    
     return questions.slice(0, 10);
     
   } catch (error) {
