@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Heart, Trophy, CheckCircle, X, Sparkles, Star } from 'lucide-react'
 import { fetchAutoQuiz } from '../utils/quizGenerator'
 import { playCorrectSound, playWrongSound, playClickSound, playComboSound } from '../utils/soundEffects'
 import { updateStats, unlockAchievement } from './Achievements'
+import { celebrateCorrect, celebrateCombo, celebrateVictory } from '../utils/confetti'
+import { getRandomMessage, getVictoryMessage } from '../utils/messages'
 
 export default function QuizArena() {
   const [gameState, setGameState] = useState('menu')
@@ -17,14 +19,25 @@ export default function QuizArena() {
   const [isCorrect, setIsCorrect] = useState(null)
   const [shake, setShake] = useState(false)
   const [userAnswers, setUserAnswers] = useState([])
+  const [encourageMsg, setEncourageMsg] = useState('')
+  const [showEncourage, setShowEncourage] = useState(false)
 
   const startQuest = async () => {
     playClickSound()
+    const bosses = ['🧸', '🧁', '🎀', '🍰', '🎨', '💝']
+    const flowers = ['🌸', '🌺', '🌻', '🌷', '🏵️', '💐']
+    const randomBoss = bosses[Math.floor(Math.random() * bosses.length)]
+    const randomFlower = flowers[Math.floor(Math.random() * flowers.length)]
+    
     setQuestions([])
     setUserAnswers([])
     setGameState('loading')
     setScore(0); setStreak(0); setHp(100); setBossHp(100)
     setCurrentQuestion(0); setSelectedAnswer(null); setShowExplanation(false)
+    
+    // Simpan emoji boss & flower untuk dipakai di UI
+    window.__taxquest_boss = randomBoss
+    window.__taxquest_flower = randomFlower
     try {
       const quizData = await fetchAutoQuiz()
       if (quizData.length >= 10) {
@@ -35,7 +48,7 @@ export default function QuizArena() {
       }
     } catch (error) {
       console.error('Failed to load quiz:', error)
-      alert('Yah, soal gagal dimuat. Cek koneksi lalu coba lagi ya 💕')
+      alert('Yah soal lagi dimuat nih, coba lagi sebentar ya Darling 💕\n\n(Server lagi sibuk bikin soal AI yang seru!)')
       setGameState('menu')
     }
   }
@@ -48,12 +61,23 @@ export default function QuizArena() {
     setUserAnswers(prev => [...prev, { questionIndex: currentQuestion, selectedOption: answerIndex, isCorrect: correct }])
     if (correct) {
       playCorrectSound()
+      celebrateCorrect()
       const multiplier = Math.min(streak + 1, 3)
       setScore(score + 100 * multiplier)
       setStreak(streak + 1)
       setBossHp(Math.max(0, bossHp - 10))
+      
+      // Encouraging message
+      const msg = multiplier >= 2 ? getRandomMessage('combo') : getRandomMessage('correct')
+      setEncourageMsg(msg)
+      setShowEncourage(true)
+      setTimeout(() => setShowEncourage(false), 2000)
+      
       if (multiplier >= 2) {
-        setTimeout(() => playComboSound(), 200)
+        setTimeout(() => {
+          playComboSound()
+          celebrateCombo()
+        }, 200)
         updateStats('max_streak', streak + 1)
         if (streak + 1 >= 5) unlockAchievement('combo_master')
       }
@@ -63,6 +87,12 @@ export default function QuizArena() {
       setStreak(0)
       setShake(true)
       setTimeout(() => setShake(false), 400)
+      
+      // Encouraging message untuk wrong answer
+      const msg = getRandomMessage('wrong')
+      setEncourageMsg(msg)
+      setShowEncourage(true)
+      setTimeout(() => setShowEncourage(false), 2000)
     }
     setShowExplanation(true)
   }
@@ -88,10 +118,12 @@ export default function QuizArena() {
   const multiplier = Math.min(streak + 1, 3)
 
   if (gameState === 'menu') {
+    const flowers = ['🌸', '🌺', '🌻', '🌷', '🏵️', '💐']
+    const menuFlower = flowers[Math.floor(Math.random() * flowers.length)]
     return (
       <div className="max-w-3xl mx-auto w-full">
         <div className="cute-card p-6 sm:p-10 text-center pop-in">
-          <div className="text-6xl sm:text-7xl mb-3 floaty select-none">🌷</div>
+          <div className="text-6xl sm:text-7xl mb-3 floaty select-none">{menuFlower}</div>
           <h2 className="font-cute text-2xl sm:text-3xl font-extrabold text-[#5b4a68]">Arena Kuis 💕</h2>
           <p className="text-sm sm:text-base text-[#a08bb0] mt-1 mb-6">Kalahkan Monster Pajak yang gemas bareng aku!</p>
           <div className="bg-[#fff3f8] border border-pink-100 rounded-2xl p-5 mb-6 text-left">
@@ -168,12 +200,15 @@ export default function QuizArena() {
 
   const question = questions[currentQuestion]
   if (!question) return null
+  
+  const boss = window.__taxquest_boss || '🧸'
+  const flower = window.__taxquest_flower || '🌸'
 
   return (
     <div className={`max-w-3xl mx-auto w-full ${shake ? 'soft-shake' : ''}`}>
       {/* Cute monster */}
       <div className="cute-card-lav p-4 sm:p-5 mb-3 text-center">
-        <div className="wiggle text-5xl select-none">🧸</div>
+        <div className="wiggle text-5xl select-none">{boss}</div>
         <div className="font-cute font-bold text-[#7c5fc9] text-sm sm:text-base mt-1">Monster Pajak</div>
         <div className="bar-track h-3 mt-2">
           <div className="bar-boss h-full rounded-full transition-all duration-300" style={{ width: `${bossHp}%` }} />

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Sparkles, Trophy, Calculator, Wrench, BookHeart, Home } from 'lucide-react'
+import { Sparkles, Trophy, Calculator, Wrench, BookHeart, Home, Moon, Sun } from 'lucide-react'
 import QuizArena from './components/QuizArena'
 import TERCalculator from './components/TERCalculator'
 import Achievements from './components/Achievements'
@@ -8,6 +8,11 @@ import ToolsHub from './components/ToolsHub'
 function App() {
   const [activeTab, setActiveTab] = useState('quest')
   const [showAchievements, setShowAchievements] = useState(false)
+  const [darkMode, setDarkMode] = useState(() => {
+    try {
+      return localStorage.getItem('taxquest_dark') === 'true'
+    } catch { return false }
+  })
   const maxXP = 1000
   // Persistent hero progress: every quiz completion adds XP, localStorage-backed.
   const [heroXP, setHeroXP] = useState(() => {
@@ -32,6 +37,11 @@ function App() {
     return () => window.removeEventListener('taxquest:xp', onXp)
   }, [])
 
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', darkMode)
+    try { localStorage.setItem('taxquest_dark', String(darkMode)) } catch {}
+  }, [darkMode])
+
   const tabs = [
     { id: 'home', name: 'Beranda', icon: Home },
     { id: 'quest', name: 'Kuis', icon: Sparkles },
@@ -43,22 +53,30 @@ function App() {
   return (
     <div className="min-h-screen cute-bg">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-pink-100">
+      <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-pink-100 dark:border-purple-800/50">
         <div className="mx-auto max-w-6xl px-4 py-3 sm:py-4">
           <div className="flex items-center gap-3">
             <div className="floaty text-4xl sm:text-5xl select-none">🌸</div>
             <div className="min-w-0 flex-1">
-              <h1 className="font-cute text-xl sm:text-2xl font-extrabold text-[#e85d9e] leading-tight truncate">
+              <h1 className="font-cute text-xl sm:text-2xl font-extrabold text-[#e85d9e] dark:text-[#ff9ec6] leading-tight truncate">
                 TaxQuest 💗 Belajar Pajak Jadi Seru
               </h1>
-              <p className="text-xs sm:text-sm text-[#a08bb0]">Kuis + kalkulator pajak yang manis & gampang dipakai</p>
+              <p className="text-xs sm:text-sm text-[#a08bb0] dark:text-purple-300">Kuis + kalkulator pajak yang manis & gampang dipakai</p>
             </div>
 
-            <div className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-[#ffe3ec] to-[#f3ecff] rounded-2xl px-3 py-2">
-              <Trophy size={18} className="text-[#e85d9e]" />
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 dark:from-slate-700 dark:to-purple-900 flex items-center justify-center text-[#7c5fc9] dark:text-purple-300 transition-all hover:scale-105"
+              title={darkMode ? 'Mode terang' : 'Mode gelap'}
+            >
+              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+
+            <div className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-[#ffe3ec] to-[#f3ecff] dark:from-purple-900/50 dark:to-pink-900/50 rounded-2xl px-3 py-2">
+              <Trophy size={18} className="text-[#e85d9e] dark:text-pink-400" />
               <div className="leading-tight">
-                <div className="font-cute text-sm font-bold text-[#5b4a68]">Level {heroLevel}</div>
-                <div className="text-[11px] text-[#a08bb0]">{xpInLevel}/{maxXP} XP</div>
+                <div className="font-cute text-sm font-bold text-[#5b4a68] dark:text-pink-200">Level {heroLevel}</div>
+                <div className="text-[11px] text-[#a08bb0] dark:text-purple-300">{xpInLevel}/{maxXP} XP</div>
               </div>
             </div>
 
@@ -114,7 +132,7 @@ function App() {
         {activeTab === 'home' && (
           <div className="max-w-4xl mx-auto text-center">
             <div className="cute-card p-6 sm:p-10 pop-in">
-              <div className="text-6xl sm:text-7xl mb-4 floaty select-none">🌷</div>
+              <div className="text-6xl sm:text-7xl mb-4 floaty select-none">🌺</div>
               <h2 className="font-cute text-2xl sm:text-3xl font-extrabold text-[#5b4a68] mb-2">
                 Hai, selamat datang di TaxQuest! 💕
               </h2>
