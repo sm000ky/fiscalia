@@ -90,10 +90,11 @@ function App() {
 
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 dark:from-slate-700 dark:to-purple-900 flex items-center justify-center text-[#7c5fc9] dark:text-purple-300 transition-all hover:scale-105"
+              className="w-11 h-11 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 dark:from-slate-700 dark:to-purple-900 flex items-center justify-center text-[#7c5fc9] dark:text-purple-300 transition-all hover:scale-105 shadow-md"
               title={darkMode ? 'Mode terang' : 'Mode gelap'}
+              aria-label={darkMode ? 'Ganti ke mode terang' : 'Ganti ke mode gelap'}
             >
-              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+              {darkMode ? <Sun size={22} /> : <Moon size={22} />}
             </button>
 
             <div className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-[#ffe3ec] to-[#f3ecff] dark:from-purple-900/50 dark:to-pink-900/50 rounded-2xl px-3 py-2">
