@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Calculator, Receipt, Building2, Landmark, BookOpenCheck, TableProperties } from 'lucide-react'
 import FiscalRecon from './FiscalRecon'
+import { PPh23Calculator, PPNCalculator, PTKPReference } from './TaxCalculators'
 
 const fmt = (n) => `Rp ${Math.round(n || 0).toLocaleString('id-ID')}`
 
@@ -205,6 +206,16 @@ export default function ToolsHub() {
         {tab === 'umkm' && <UmkmTool />}
         {tab === 'recon' && <FiscalRecon />}
         {tab === 'ptkp' && <PtkpTool />}
+      </div>
+
+      {/* New Quick Tools */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <PPh23Calculator />
+        <PPNCalculator />
+      </div>
+      
+      <div className="mt-4">
+        <PTKPReference />
       </div>
     </div>
   )

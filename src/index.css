@@ -47,14 +47,20 @@ input[type="range"] { touch-action: pan-x; min-height: 32px; }
   font-family: 'Baloo 2', 'Nunito', sans-serif;
 }
 
-/* playful gradient canvas + floating blobs */
+/* playful gradient canvas + floating blobs + smooth animation */
 .cute-bg {
   background:
     radial-gradient(440px 340px at 10% 8%, rgba(255, 107, 168, 0.22), transparent 65%),
     radial-gradient(540px 400px at 90% 15%, rgba(167, 112, 255, 0.22), transparent 65%),
     radial-gradient(500px 380px at 50% 95%, rgba(74, 222, 159, 0.18), transparent 65%),
     linear-gradient(180deg, #fffbf5 0%, #fff5fb 50%, #f5f0ff 100%);
-  transition: background 0.5s ease;
+  transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: bgFloat 20s ease-in-out infinite;
+}
+
+@keyframes bgFloat {
+  0%, 100% { background-position: 0% 0%, 100% 0%, 50% 100%; }
+  50% { background-position: 10% 10%, 90% 10%, 50% 90%; }
 }
 
 .dark .cute-bg {
@@ -63,21 +69,27 @@ input[type="range"] { touch-action: pan-x; min-height: 32px; }
     radial-gradient(540px 400px at 90% 15%, rgba(130, 80, 200, 0.3), transparent 65%),
     radial-gradient(500px 380px at 50% 95%, rgba(94, 252, 179, 0.2), transparent 65%),
     linear-gradient(180deg, #1a1525 0%, #221830 50%, #2a1840 100%);
+  animation: bgFloatDark 20s ease-in-out infinite;
 }
 
-/* frosted playful card with glow */
+@keyframes bgFloatDark {
+  0%, 100% { background-position: 0% 0%, 100% 0%, 50% 100%; }
+  50% { background-position: 5% 5%, 95% 5%, 50% 95%; }
+}
+
+/* frosted playful card with glow + smooth transition */
 .cute-card {
   background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(10px);
   border: 2px solid rgba(255, 107, 168, 0.3);
   border-radius: 1.5rem;
   box-shadow: 0 12px 35px rgba(230, 57, 128, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .cute-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 40px rgba(230, 57, 128, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+  transform: translateY(-3px);
+  box-shadow: 0 16px 45px rgba(230, 57, 128, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
 }
 
 .dark .cute-card {
@@ -87,7 +99,8 @@ input[type="range"] { touch-action: pan-x; min-height: 32px; }
 }
 
 .dark .cute-card:hover {
-  box-shadow: 0 15px 40px rgba(130, 80, 200, 0.4), 0 0 25px rgba(189, 143, 255, 0.12);
+  transform: translateY(-3px);
+  box-shadow: 0 16px 45px rgba(130, 80, 200, 0.4), 0 0 25px rgba(189, 143, 255, 0.15);
 }
 
 .cute-card-lav {

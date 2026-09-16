@@ -6,6 +6,8 @@ import { updateStats, unlockAchievement } from './Achievements'
 import { celebrateCorrect, celebrateCombo, celebrateVictory } from '../utils/confetti'
 import { getRandomMessage, getVictoryMessage } from '../utils/messages'
 import CuteLoading from './CuteLoading'
+import BossBattle, { BossReward } from './BossBattle'
+import { getRandomBoss } from '../data/bossMonsters'
 
 export default function QuizArena() {
   const [gameState, setGameState] = useState('menu')
@@ -22,23 +24,19 @@ export default function QuizArena() {
   const [userAnswers, setUserAnswers] = useState([])
   const [encourageMsg, setEncourageMsg] = useState('')
   const [showEncourage, setShowEncourage] = useState(false)
+  const [boss, setBoss] = useState(null)
+  const [showBossReward, setShowBossReward] = useState(false)
 
   const startQuest = async () => {
     playClickSound()
-    const bosses = ['🧸', '🧁', '🎀', '🍰', '🎨', '💝']
-    const flowers = ['🌸', '🌺', '🌻', '🌷', '🏵️', '💐']
-    const randomBoss = bosses[Math.floor(Math.random() * bosses.length)]
-    const randomFlower = flowers[Math.floor(Math.random() * flowers.length)]
+    const randomBoss = getRandomBoss()
+    setBoss(randomBoss)
     
     setQuestions([])
     setUserAnswers([])
     setGameState('loading')
     setScore(0); setStreak(0); setHp(100); setBossHp(100)
     setCurrentQuestion(0); setSelectedAnswer(null); setShowExplanation(false)
-    
-    // Simpan emoji boss & flower untuk dipakai di UI
-    window.__taxquest_boss = randomBoss
-    window.__taxquest_flower = randomFlower
     try {
       const quizData = await fetchAutoQuiz()
       if (quizData.length >= 10) {
@@ -108,7 +106,10 @@ export default function QuizArena() {
       updateStats('high_score', finalScore)
       updateStats('max_streak', streak)
       try { window.dispatchEvent(new CustomEvent('taxquest:xp', { detail: { xp: finalScore } })) } catch {}
-      if (bossHp === 0) unlockAchievement('boss_slayer')
+      if (bossHp === 0) {
+        unlockAchievement('boss_slayer')
+        setShowBossReward(true)
+      }
       if (userAnswers.filter(a => a.isCorrect).length + (isCorrect ? 0 : 0) >= questions.length) unlockAchievement('perfect_score')
       if (finalScore >= 800) unlockAchievement('fiscal_warrior')
       setGameState('finished')
@@ -159,6 +160,17 @@ export default function QuizArena() {
     const totalCorrect = userAnswers.filter(a => a.isCorrect).length
     const totalQuestions = questions.length
     const accuracy = totalQuestions ? Math.round((totalCorrect / totalQuestions) * 100) : 0
+    const bossDefeated = bossHp <= 0
+    
+    // Show boss reward if defeated
+    if (bossDefeated && boss && showBossReward) {
+      return <BossReward boss={boss} show={true} onClose={() => {
+        setShowBossReward(false)
+        // Award XP
+        window.dispatchEvent(new CustomEvent('taxquest:xp', { detail: { xp: boss.reward.xp } }))
+      }} />
+    }
+    
     const grade = score >= 400
       ? { t: 'Luar Biasa! 🌟', d: 'Kamu bintang pajak hari ini!' }
       : score >= 300
@@ -196,21 +208,20 @@ export default function QuizArena() {
 
   const question = questions[currentQuestion]
   if (!question) return null
-  
-  const boss = window.__taxquest_boss || '🧸'
-  const flower = window.__taxquest_flower || '🌸'
 
   return (
     <div className={`max-w-3xl mx-auto w-full ${shake ? 'soft-shake' : ''}`}>
-      {/* Cute monster */}
-      <div className="cute-card-lav p-4 sm:p-5 mb-3 text-center">
-        <div className="wiggle text-5xl select-none">{boss}</div>
-        <div className="font-cute font-bold text-[#7c5fc9] text-sm sm:text-base mt-1">Monster Pajak</div>
-        <div className="bar-track h-3 mt-2">
-          <div className="bar-boss h-full rounded-full transition-all duration-300" style={{ width: `${bossHp}%` }} />
+      {/* Boss Battle Display */}
+      {boss && (
+        <div className="mb-4">
+          <BossBattle 
+            boss={{...boss, hp: bossHp}} 
+            playerHP={hp}
+            onAttack={() => {}}
+            onDefend={() => {}}
+          />
         </div>
-        <div className="text-[11px] text-[#a08bb0] mt-1">{bossHp}/100</div>
-      </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-3">
