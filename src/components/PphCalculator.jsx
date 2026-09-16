@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Calculator, Users, TrendingUp } from 'lucide-react'
+import { Calculator, Users } from 'lucide-react'
 
 export default function PphCalculator() {
   const [gaji, setGaji] = useState(8000000)
@@ -7,7 +7,7 @@ export default function PphCalculator() {
   const [status, setStatus] = useState('TK/0')
 
   const bruto = gaji + tunjangan
-  
+
   const getKategoriTER = () => {
     if (status.startsWith('TK') || status === 'K/0') return 'A'
     if (status === 'K/1' || status === 'K/2') return 'B'
@@ -34,121 +34,65 @@ export default function PphCalculator() {
 
   const pph21 = bruto * (getPersenTER() / 100)
   const takeHome = bruto - pph21
+  const money = (n) => `Rp ${Math.round(n).toLocaleString('id-ID')}`
+
+  const slider = (label, emoji, value, set, min, max, step) => (
+    <div className="bg-white rounded-2xl border border-pink-100 p-4">
+      <label className="text-xs font-bold text-[#e85d9e] block mb-2">{emoji} {label}</label>
+      <input type="range" min={min} max={max} step={step} value={value} onChange={(e) => set(Number(e.target.value))} className="w-full accent-pink-500" />
+      <div className="font-cute font-bold text-[#5b4a68] mt-1 text-right">{money(value)}</div>
+    </div>
+  )
 
   return (
-    <div className="space-y-6">
-      <div className="bg-gradient-to-r from-cyan-900 to-blue-900 border-4 border-neon-cyan p-6 shadow-pixel">
-        <div className="flex items-center gap-3 mb-4">
-          <Calculator className="text-neon-cyan" size={32} />
-          <h2 className="font-pixel text-lg text-neon-cyan">PPH 21 TER CALCULATOR</h2>
-        </div>
-        <p className="font-retro text-sm text-gray-300">
-          Hitung PPh 21 Tarif Efektif Rata-rata (TER) sesuai PMK 168/2023
-        </p>
+    <div className="max-w-4xl mx-auto">
+      <div className="cute-card p-5 sm:p-6 mb-3 text-center pop-in">
+        <div className="text-4xl mb-1 select-none">💼</div>
+        <h2 className="font-cute text-xl sm:text-2xl font-extrabold text-[#5b4a68] flex items-center justify-center gap-2">
+          <Calculator size={22} className="text-[#e85d9e]" /> PPh 21 Take-Home Pay
+        </h2>
+        <p className="text-sm text-[#a08bb0] mt-1">Sesuai PMK 168/2023 • geser & langsung lihat hasilnya</p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="space-y-4">
-          <div className="bg-black/80 border-4 border-neon-purple p-4 shadow-pixel">
-            <label className="font-pixel text-xs text-neon-purple block mb-2">GAJI POKOK</label>
-            <input
-              type="range"
-              min="4000000"
-              max="20000000"
-              step="100000"
-              value={gaji}
-              onChange={(e) => setGaji(Number(e.target.value))}
-              className="w-full"
-            />
-            <div className="font-pixel text-sm text-white mt-2 text-right">
-              Rp {gaji.toLocaleString('id-ID')}
-            </div>
-          </div>
-
-          <div className="bg-black/80 border-4 border-neon-yellow p-4 shadow-pixel">
-            <label className="font-pixel text-xs text-neon-yellow block mb-2">TUNJANGAN</label>
-            <input
-              type="range"
-              min="0"
-              max="10000000"
-              step="100000"
-              value={tunjangan}
-              onChange={(e) => setTunjangan(Number(e.target.value))}
-              className="w-full"
-            />
-            <div className="font-pixel text-sm text-white mt-2 text-right">
-              Rp {tunjangan.toLocaleString('id-ID')}
-            </div>
-          </div>
-
-          <div className="bg-black/80 border-4 border-neon-pink p-4 shadow-pixel">
-            <label className="font-pixel text-xs text-neon-pink block mb-2">STATUS PTKP</label>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="w-full bg-black text-white border-2 border-neon-pink p-2 font-retro"
-            >
-              <option value="TK/0">TK/0 - Tidak Kawin Tanpa Tanggungan</option>
-              <option value="TK/1">TK/1 - Tidak Kawin 1 Tanggungan</option>
-              <option value="K/0">K/0 - Kawin Tanpa Tanggungan</option>
-              <option value="K/1">K/1 - Kawin 1 Tanggungan</option>
-              <option value="K/2">K/2 - Kawin 2 Tanggungan</option>
-              <option value="K/3">K/3 - Kawin 3 Tanggungan</option>
+      <div className="grid md:grid-cols-2 gap-3">
+        <div className="space-y-3">
+          {slider('Gaji pokok', '💜', gaji, setGaji, 4000000, 20000000, 100000)}
+          {slider('Tunjangan', '🌟', tunjangan, setTunjangan, 0, 10000000, 100000)}
+          <div className="cute-card-lav p-4">
+            <label className="text-xs font-bold text-[#7c5fc9] flex items-center gap-1 mb-2"><Users size={14} /> STATUS PTKP</label>
+            <select value={status} onChange={(e) => setStatus(e.target.value)} className="w-full bg-white rounded-xl border border-purple-100 p-3 text-sm text-[#5b4a68] font-semibold">
+              <option value="TK/0">Belum nikah, tanpa tanggungan</option>
+              <option value="TK/1">Belum nikah, 1 tanggungan</option>
+              <option value="K/0">Sudah nikah, tanpa tanggungan</option>
+              <option value="K/1">Sudah nikah, 1 tanggungan</option>
+              <option value="K/2">Sudah nikah, 2 tanggungan</option>
+              <option value="K/3">Sudah nikah, 3 tanggungan</option>
             </select>
           </div>
         </div>
 
-        <div className="space-y-4">
-          <div className="bg-gradient-to-br from-purple-900 to-pink-900 border-4 border-neon-pink p-6 shadow-pixel">
-            <h3 className="font-pixel text-sm text-neon-pink mb-4">HASIL KALKULASI</h3>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="font-retro text-sm text-gray-300">Penghasilan Bruto</span>
-                <span className="font-pixel text-sm text-white">Rp {bruto.toLocaleString('id-ID')}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="font-retro text-sm text-gray-300">Kategori TER</span>
-                <span className="font-pixel text-lg text-neon-cyan">{getKategoriTER()}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="font-retro text-sm text-gray-300">Tarif TER</span>
-                <span className="font-pixel text-lg text-neon-yellow">{getPersenTER()}%</span>
-              </div>
-              <div className="border-t-2 border-neon-pink pt-3 flex justify-between items-center">
-                <span className="font-pixel text-sm text-neon-pink">PPH 21</span>
-                <span className="font-pixel text-lg text-red-400">Rp {Math.round(pph21).toLocaleString('id-ID')}</span>
-              </div>
-              <div className="bg-neon-cyan/20 border-2 border-neon-cyan p-3 flex justify-between items-center">
-                <span className="font-pixel text-sm text-neon-cyan">TAKE HOME PAY</span>
-                <span className="font-pixel text-lg text-neon-cyan">Rp {Math.round(takeHome).toLocaleString('id-ID')}</span>
+        <div className="space-y-3">
+          <div className="bg-gradient-to-br from-[#ff7eb3] to-[#b388ff] rounded-3xl p-5 text-white">
+            <h3 className="font-cute font-bold mb-3 opacity-90">💖 Hasil kalkulasi</h3>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between"><span className="opacity-80">Bruto</span><b>{money(bruto)}</b></div>
+              <div className="flex justify-between"><span className="opacity-80">Kategori TER</span><b>{getKategoriTER()} • {getPersenTER()}%</b></div>
+              <div className="flex justify-between"><span className="opacity-80">PPh 21</span><b>{money(pph21)}</b></div>
+              <div className="bg-white/25 rounded-2xl p-3 flex justify-between items-center mt-1">
+                <span className="font-cute font-bold">💚 Take-home pay</span>
+                <span className="font-cute text-xl font-extrabold">{money(takeHome)}</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-black/80 border-4 border-neon-yellow p-4 shadow-pixel">
-            <h3 className="font-pixel text-xs text-neon-yellow mb-3">GRAFIK POTONGAN</h3>
-            <div className="space-y-2">
-              <div>
-                <div className="flex justify-between mb-1">
-                  <span className="font-retro text-xs text-gray-400">Jan-Nov (per bulan)</span>
-                  <span className="font-retro text-xs text-white">Rp {Math.round(pph21).toLocaleString('id-ID')}</span>
-                </div>
-                <div className="bg-gray-800 h-6 border-2 border-neon-purple relative overflow-hidden">
-                  <div 
-                    className="bg-neon-purple h-full transition-all"
-                    style={{ width: `${(pph21 / bruto) * 100}%` }}
-                  ></div>
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between mb-1">
-                  <span className="font-retro text-xs text-gray-400">Desember (True Up)</span>
-                  <span className="font-retro text-xs text-white">Variable</span>
-                </div>
-                <div className="bg-gray-800 h-6 border-2 border-neon-cyan relative overflow-hidden">
-                  <div className="bg-neon-cyan h-full w-1/2 animate-pulse"></div>
-                </div>
-              </div>
+          <div className="cute-card-mint p-4">
+            <h3 className="font-cute font-bold text-[#0d4a3a] text-sm mb-2">🍰 Porsi potongan</h3>
+            <div className="flex justify-between text-xs mb-1">
+              <span className="text-[#8b7a99]">Pajak vs gaji bersih</span>
+              <span className="font-cute font-bold text-[#0d4a3a]">{money(pph21)}</span>
+            </div>
+            <div className="bar-track h-3">
+              <div className="h-full rounded-full transition-all" style={{ width: `${bruto ? (pph21 / bruto) * 100 : 0}%`, background: 'linear-gradient(90deg,#b388ff,#ff7eb3)' }} />
             </div>
           </div>
         </div>

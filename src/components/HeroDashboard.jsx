@@ -1,137 +1,88 @@
-import { User, Coffee, TrendingUp, DollarSign, Calendar, Sparkles } from 'lucide-react'
+import { User, DollarSign, Calendar, Sparkles } from 'lucide-react'
 
 export default function HeroDashboard() {
   const quotes = [
-    "Debit di kiri, Kredit di kanan, hidup tenang!",
-    "PPh 21 TER? Easy peasy lemon squeezy!",
-    "Koreksi Fiskal is my cardio",
-    "Audit Trail? More like Audit TALE!",
-    "Tax Planning > Tax Evasion (always!)",
+    'Debit di kiri, kredit di kanan, hidup tenang! 🌷',
+    'PPh 21 TER? Gampang banget! 💕',
+    'Koreksi fiskal itu cardio ✨',
+    'Rencanakan pajak dengan manis, bukan ngemplang! 🍰',
   ]
-
   const randomQuote = quotes[Math.floor(Math.random() * quotes.length)]
 
   return (
-    <div className="space-y-6">
-      {/* Character Profile Card */}
-      <div className="bg-gradient-to-br from-purple-900 to-pink-900 border-4 border-neon-pink p-6 shadow-pixel">
-        <div className="flex flex-col md:flex-row gap-6 items-center">
-          <div className="w-32 h-32 bg-neon-cyan border-4 border-white flex items-center justify-center">
-            <User size={64} className="text-purple-900" />
+    <div className="space-y-3">
+      <div className="cute-card p-5 sm:p-6">
+        <div className="flex flex-col sm:flex-row gap-4 items-center">
+          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#ffd1e0] to-[#e3d4ff] flex items-center justify-center shrink-0">
+            <User size={44} className="text-[#e85d9e]" />
           </div>
-          
-          <div className="flex-1 space-y-3">
-            <h2 className="font-pixel text-xl text-neon-yellow">TAX SORCERER</h2>
-            <div className="flex gap-4 items-center">
-              <span className="font-pixel text-sm text-white">LVL 42</span>
-              <div className="flex-1 bg-gray-800 h-6 border-2 border-neon-cyan relative">
-                <div className="bg-neon-cyan h-full w-3/4"></div>
-                <span className="absolute inset-0 flex items-center justify-center font-pixel text-xs text-black">
-                  7500/10000 EXP
-                </span>
+          <div className="flex-1 w-full text-center sm:text-left">
+            <h2 className="font-cute text-xl font-extrabold text-[#5b4a68]">Pejuang Pajak 🌸</h2>
+            <div className="flex gap-2 items-center justify-center sm:justify-start mt-1">
+              <span className="chip bg-[#f6f0ff] text-[#7c5fc9] text-xs px-3 py-1">Level 42</span>
+              <div className="flex-1 bar-track h-3 max-w-[200px]">
+                <div className="bar-xp h-full rounded-full" style={{ width: '75%' }} />
               </div>
+              <span className="text-[11px] text-[#a08bb0]">7500/10000</span>
             </div>
-            
-            {/* Stats */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-black/50 p-2 border-2 border-neon-purple">
-                <p className="font-retro text-sm text-gray-400">Mana</p>
-                <p className="font-pixel text-lg text-neon-purple">850/1000</p>
+            <div className="grid grid-cols-2 gap-2 mt-3">
+              <div className="bg-[#f6f0ff] rounded-2xl p-2.5 text-center">
+                <p className="text-[11px] text-[#a08bb0]">💜 Energi</p>
+                <p className="font-cute font-extrabold text-[#7c5fc9]">850/1000</p>
               </div>
-              <div className="bg-black/50 p-2 border-2 border-yellow-500">
-                <p className="font-retro text-sm text-gray-400">Ngantuk Meter</p>
-                <p className="font-pixel text-lg text-yellow-500">35%</p>
+              <div className="bg-[#fff8ec] rounded-2xl p-2.5 text-center">
+                <p className="text-[11px] text-[#a08bb0]">🍰 Semangat</p>
+                <p className="font-cute font-extrabold text-[#d99a2b]">65%</p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Daily Quote */}
-      <div className="bg-black/80 border-4 border-neon-yellow p-6 shadow-pixel">
-        <div className="flex items-start gap-3">
-          <Sparkles className="text-neon-yellow flex-shrink-0" size={24} />
+      <div className="cute-card-lav p-5">
+        <div className="flex items-start gap-2.5">
+          <Sparkles size={20} className="text-[#7c5fc9] shrink-0 mt-0.5" />
           <div>
-            <h3 className="font-pixel text-sm text-neon-yellow mb-2">DAILY WISDOM</h3>
-            <p className="font-retro text-xl text-white">{randomQuote}</p>
+            <h3 className="font-cute font-bold text-[#7c5fc9] text-sm">Kata hari ini 💌</h3>
+            <p className="text-[#5b4a68] font-semibold">{randomQuote}</p>
           </div>
         </div>
       </div>
 
-      {/* Quick Access Widgets */}
-      <div className="grid md:grid-cols-3 gap-4">
-        {/* Kurs Pajak Widget */}
-        <div className="bg-gradient-to-br from-cyan-900 to-blue-900 border-4 border-neon-cyan p-4 shadow-pixel">
-          <div className="flex items-center gap-2 mb-3">
-            <DollarSign className="text-neon-cyan" size={20} />
-            <h3 className="font-pixel text-xs text-neon-cyan">KURS PAJAK</h3>
+      <div className="grid sm:grid-cols-3 gap-3">
+        <div className="cute-card-mint p-4">
+          <div className="flex items-center gap-1.5 mb-2">
+            <DollarSign size={18} className="text-[#1d9e6b]" />
+            <h3 className="font-cute font-bold text-[#0d4a3a] text-sm">Kurs pajak 💚</h3>
           </div>
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="font-retro text-sm text-gray-300">USD</span>
-              <span className="font-pixel text-sm text-white">Rp 15.750</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-retro text-sm text-gray-300">EUR</span>
-              <span className="font-pixel text-sm text-white">Rp 17.200</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-retro text-sm text-gray-300">JPY</span>
-              <span className="font-pixel text-sm text-white">Rp 112</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Schedule Widget */}
-        <div className="bg-gradient-to-br from-purple-900 to-pink-900 border-4 border-neon-pink p-4 shadow-pixel">
-          <div className="flex items-center gap-2 mb-3">
-            <Calendar className="text-neon-pink" size={20} />
-            <h3 className="font-pixel text-xs text-neon-pink">HARI INI</h3>
-          </div>
-          <div className="space-y-2">
-            <div className="bg-black/50 p-2 border-l-4 border-neon-pink">
-              <p className="font-retro text-xs text-gray-400">08:00 - 10:00</p>
-              <p className="font-pixel text-xs text-white">PPh Pasal 21</p>
-            </div>
-            <div className="bg-black/50 p-2 border-l-4 border-neon-cyan">
-              <p className="font-retro text-xs text-gray-400">13:00 - 15:00</p>
-              <p className="font-pixel text-xs text-white">Audit Forensik</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Calculator */}
-        <div className="bg-gradient-to-br from-yellow-900 to-orange-900 border-4 border-neon-yellow p-4 shadow-pixel">
-          <div className="flex items-center gap-2 mb-3">
-            <TrendingUp className="text-neon-yellow" size={20} />
-            <h3 className="font-pixel text-xs text-neon-yellow">QUICK CALC</h3>
-          </div>
-          <div className="space-y-2">
-            <input 
-              type="number" 
-              placeholder="Penghasilan Bruto"
-              className="w-full bg-black/50 border-2 border-neon-yellow p-2 text-white font-retro text-sm"
-            />
-            <button className="w-full bg-neon-yellow text-black font-pixel text-xs py-2 retro-button border-2 border-black shadow-pixel-sm hover:bg-yellow-300">
-              HITUNG PPH 21
-            </button>
-            <div className="bg-black/50 p-2 text-center">
-              <p className="font-retro text-xs text-gray-400">Hasil</p>
-              <p className="font-pixel text-lg text-neon-yellow">Rp 0</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Achievement Badges */}
-      <div className="bg-black/80 border-4 border-neon-purple p-6 shadow-pixel">
-        <h3 className="font-pixel text-sm text-neon-purple mb-4">BADGES EARNED</h3>
-        <div className="flex flex-wrap gap-3">
-          {['Rookie Auditor', 'Tax Master', 'Quiz Champion', 'PPh 21 Expert', 'Rekonsiliasi Pro'].map((badge, i) => (
-            <div key={i} className="bg-gradient-to-br from-purple-600 to-pink-600 border-2 border-white px-3 py-2 shadow-pixel-sm">
-              <span className="font-pixel text-xs text-white">{badge}</span>
+          {[['USD', 'Rp 15.750'], ['EUR', 'Rp 17.200'], ['JPY', 'Rp 112']].map(([c, v]) => (
+            <div key={c} className="flex justify-between text-sm py-1 border-b border-white/60 last:border-0">
+              <span className="text-[#5b8a78]">{c}</span>
+              <span className="font-cute font-bold text-[#0d4a3a]">{v}</span>
             </div>
           ))}
+        </div>
+
+        <div className="cute-card p-4">
+          <div className="flex items-center gap-1.5 mb-2">
+            <Calendar size={18} className="text-[#e85d9e]" />
+            <h3 className="font-cute font-bold text-[#5b4a68] text-sm">Jadwal hari ini 🌸</h3>
+          </div>
+          {[
+            ['08:00 – 10:00', 'PPh Pasal 21', '#fff3f8'],
+            ['13:00 – 15:00', 'Audit forensik', '#f6f0ff'],
+          ].map(([t, s, bg]) => (
+            <div key={t} className="rounded-xl p-2.5 mb-2 last:mb-0" style={{ background: bg }}>
+              <p className="text-[11px] text-[#a08bb0]">{t}</p>
+              <p className="font-cute font-bold text-[#5b4a68] text-sm">{s}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="bg-gradient-to-br from-[#ff7eb3] to-[#b388ff] rounded-3xl p-4 text-white text-center flex flex-col justify-center">
+          <div className="text-4xl mb-1">💖</div>
+          <p className="font-cute font-bold">Tetap semangat ya!</p>
+          <p className="text-xs opacity-90">Satu kuis sehari bikin pintar pajak ✨</p>
         </div>
       </div>
     </div>

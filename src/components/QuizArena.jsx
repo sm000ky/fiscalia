@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
-import { Trophy, Heart, Zap, X, CheckCircle } from 'lucide-react'
+import { useState } from 'react'
+import { Heart, Trophy, CheckCircle, X, Sparkles, Star } from 'lucide-react'
 import { fetchAutoQuiz } from '../utils/quizGenerator'
 import { playCorrectSound, playWrongSound, playClickSound, playComboSound } from '../utils/soundEffects'
 import { updateStats, unlockAchievement } from './Achievements'
 
 export default function QuizArena() {
-  const [gameState, setGameState] = useState('menu') // menu, loading, playing, finished
+  const [gameState, setGameState] = useState('menu')
   const [questions, setQuestions] = useState([])
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [score, setScore] = useState(0)
@@ -15,29 +15,18 @@ export default function QuizArena() {
   const [selectedAnswer, setSelectedAnswer] = useState(null)
   const [showExplanation, setShowExplanation] = useState(false)
   const [isCorrect, setIsCorrect] = useState(null)
-  const [screenShake, setScreenShake] = useState(false)
-  const [userAnswers, setUserAnswers] = useState([]) // Track all answers
+  const [shake, setShake] = useState(false)
+  const [userAnswers, setUserAnswers] = useState([])
 
   const startQuest = async () => {
     playClickSound()
-    
-    // Clear old questions immediately
     setQuestions([])
     setUserAnswers([])
     setGameState('loading')
-    setScore(0)
-    setStreak(0)
-    setHp(100)
-    setBossHp(100)
-    setCurrentQuestion(0)
-    setSelectedAnswer(null)
-    setShowExplanation(false)
-    
+    setScore(0); setStreak(0); setHp(100); setBossHp(100)
+    setCurrentQuestion(0); setSelectedAnswer(null); setShowExplanation(false)
     try {
-      console.log('🎮 Fetching fresh 10 questions from API...')
       const quizData = await fetchAutoQuiz()
-      console.log('✓ Received questions:', quizData.length)
-      
       if (quizData.length >= 10) {
         setQuestions(quizData)
         setGameState('playing')
@@ -46,134 +35,78 @@ export default function QuizArena() {
       }
     } catch (error) {
       console.error('Failed to load quiz:', error)
-      alert('Failed to fetch quiz from server. Please check connection and try again.')
+      alert('Yah, soal gagal dimuat. Cek koneksi lalu coba lagi ya 💕')
       setGameState('menu')
     }
   }
 
   const handleAnswer = (answerIndex) => {
     if (selectedAnswer !== null) return
-    
     setSelectedAnswer(answerIndex)
     const correct = answerIndex === questions[currentQuestion].answerIndex
     setIsCorrect(correct)
-    
-    // Record answer
-    const newAnswer = {
-      questionIndex: currentQuestion,
-      selectedOption: answerIndex,
-      isCorrect: correct
-    }
-    setUserAnswers(prev => [...prev, newAnswer])
-    
+    setUserAnswers(prev => [...prev, { questionIndex: currentQuestion, selectedOption: answerIndex, isCorrect: correct }])
     if (correct) {
       playCorrectSound()
       const multiplier = Math.min(streak + 1, 3)
-      const points = 100 * multiplier
-      setScore(score + points)
+      setScore(score + 100 * multiplier)
       setStreak(streak + 1)
-      
-      // Damage boss
-      const damage = 10
-      setBossHp(Math.max(0, bossHp - damage))
-      
-      // Combo sound
+      setBossHp(Math.max(0, bossHp - 10))
       if (multiplier >= 2) {
         setTimeout(() => playComboSound(), 200)
-        
-        // Update max streak stat
         updateStats('max_streak', streak + 1)
-        
-        // Unlock combo master
-        if (streak + 1 >= 5) {
-          unlockAchievement('combo_master')
-        }
+        if (streak + 1 >= 5) unlockAchievement('combo_master')
       }
     } else {
       playWrongSound()
       setHp(Math.max(0, hp - 20))
       setStreak(0)
-      
-      // Screen shake
-      setScreenShake(true)
-      setTimeout(() => setScreenShake(false), 500)
+      setShake(true)
+      setTimeout(() => setShake(false), 400)
     }
-    
     setShowExplanation(true)
   }
 
   const nextQuestion = () => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1)
-      setSelectedAnswer(null)
-      setShowExplanation(false)
-      setIsCorrect(null)
+      setSelectedAnswer(null); setShowExplanation(false); setIsCorrect(null)
     } else {
-      // Quiz finished — persistent hero XP + accurate final score
       const finalScore = score
       updateStats('quiz_completed', 1)
       updateStats('high_score', finalScore)
       updateStats('max_streak', streak)
       try { window.dispatchEvent(new CustomEvent('taxquest:xp', { detail: { xp: finalScore } })) } catch {}
-      
-      // Check if boss defeated
-      if (bossHp === 0) {
-        unlockAchievement('boss_slayer')
-      }
-      
-      // Check if perfect score
-      if (totalCorrect === questions.length) {
-        unlockAchievement('perfect_score')
-      }
-      
-      // Check high score achievement
-      if (finalScore >= 800) {
-        unlockAchievement('fiscal_warrior')
-      }
-      
+      if (bossHp === 0) unlockAchievement('boss_slayer')
+      if (userAnswers.filter(a => a.isCorrect).length + (isCorrect ? 0 : 0) >= questions.length) unlockAchievement('perfect_score')
+      if (finalScore >= 800) unlockAchievement('fiscal_warrior')
       setGameState('finished')
     }
   }
 
-  const getStreakLabel = () => {
-    if (streak >= 3) return 'MEGA COMBO!'
-    if (streak >= 2) return 'DOUBLE COMBO!'
-    if (streak >= 1) return 'COMBO!'
-    return ''
-  }
+  const streakText = streak >= 3 ? '🔥 Kombo Mega!' : streak >= 2 ? '✨ Kombo Ganda!' : streak >= 1 ? '💫 Kombo!' : ''
+  const multiplier = Math.min(streak + 1, 3)
 
-  const getMultiplier = () => {
-    return Math.min(streak + 1, 3)
-  }
-
-  // UI RENDER — wrapped in responsive max width, forgiving on small screens
   if (gameState === 'menu') {
     return (
-      <div className="max-w-4xl mx-auto w-full">
-        <div className="arcade-bg pixel-box-pink p-4 sm:p-8 text-center">
-          <Trophy className="w-24 h-24 mx-auto mb-6 neon-yellow" />
-          <h2 className="font-pixel text-3xl neon-pink mb-4">QUIZ ARENA</h2>
-          <p className="font-retro text-xl text-gray-300 mb-6">
-            Battle Tax Monsters and Prove Your Mastery!
-          </p>
-          
-          <div className="bg-black/40 border-4 border-cyan-400 p-6 mb-6">
-            <h3 className="font-pixel text-lg neon-cyan mb-4">GAME RULES</h3>
-            <div className="text-left space-y-2 font-retro text-gray-300">
-              <p>• Answer 10 challenging tax questions</p>
-              <p>• Build combo streak for bonus points (x2, x3)</p>
-              <p>• Wrong answer = -20 HP damage</p>
-              <p>• Reach 0 HP = Game Over</p>
-            </div>
+      <div className="max-w-3xl mx-auto w-full">
+        <div className="cute-card p-6 sm:p-10 text-center pop-in">
+          <div className="text-6xl sm:text-7xl mb-3 floaty select-none">🌷</div>
+          <h2 className="font-cute text-2xl sm:text-3xl font-extrabold text-[#5b4a68]">Arena Kuis 💕</h2>
+          <p className="text-sm sm:text-base text-[#a08bb0] mt-1 mb-6">Kalahkan Monster Pajak yang gemas bareng aku!</p>
+          <div className="bg-[#fff3f8] border border-pink-100 rounded-2xl p-5 mb-6 text-left">
+            <div className="font-cute font-bold text-[#e85d9e] mb-3">📜 Cara main</div>
+            <ul className="space-y-2 text-sm text-[#8b7a99]">
+              <li>🌸 Jawab 10 soal pajak yang seru</li>
+              <li>🔥 Jawaban beruntun = poin bonus ×2, ×3</li>
+              <li>💔 Salah jawab = hati -20</li>
+              <li>💖 Hati habis = coba lagi ya, semangat!</li>
+            </ul>
           </div>
-
-          <button
-            onClick={startQuest}
-            className="retro-button bg-gradient-to-r from-pink-600 to-purple-600 text-white px-6 py-4 sm:px-8 font-pixel text-base sm:text-xl border-4 border-white w-full sm:w-auto hover:scale-105 transition-transform touch-manipulation"
-          >
-            🎮 START NEW QUEST
+          <button onClick={startQuest} className="cute-btn cute-btn-pink w-full sm:w-auto px-10 py-4 text-lg">
+            ✨ Mulai Petualangan
           </button>
-          <p className="font-retro text-sm text-gray-500 mt-3">Soal AI fresh tiap quest • offline fallback tersedia</p>
+          <p className="text-xs text-[#c4b3d1] mt-3">Soal baru tiap main • bisa offline juga</p>
         </div>
       </div>
     )
@@ -181,16 +114,13 @@ export default function QuizArena() {
 
   if (gameState === 'loading') {
     return (
-      <div className="max-w-4xl mx-auto">
-        <div className="arcade-bg pixel-box-cyan p-12 text-center">
-          <div className="glitch-effect mb-6">
-            <Zap className="w-24 h-24 mx-auto neon-cyan" />
-          </div>
-          <h2 className="font-pixel text-2xl neon-cyan mb-4 blink">
-            SUMMONING TAX MONSTERS...
-          </h2>
-          <div className="bg-gray-900 h-6 border-4 border-cyan-400 relative overflow-hidden">
-            <div className="bg-cyan-400 h-full animate-pulse" style={{width: '60%'}}></div>
+      <div className="max-w-3xl mx-auto">
+        <div className="cute-card-lav p-10 sm:p-14 text-center pop-in">
+          <div className="text-6xl mb-4 floaty select-none">🌀</div>
+          <h2 className="font-cute text-xl sm:text-2xl font-bold text-[#7c5fc9]">Menyiapkan soal manis...</h2>
+          <p className="text-sm text-[#a08bb0] mt-1 mb-5">Sabar ya, monsternya lagi dandan 💅</p>
+          <div className="bar-track h-3 max-w-xs mx-auto">
+            <div className="bar-boss h-full rounded-full animate-pulse" style={{ width: '65%' }} />
           </div>
         </div>
       </div>
@@ -198,194 +128,126 @@ export default function QuizArena() {
   }
 
   if (gameState === 'finished') {
-    // Calculate accurate final stats
     const totalCorrect = userAnswers.filter(a => a.isCorrect).length
     const totalQuestions = questions.length
-    const accuracy = Math.round((totalCorrect / totalQuestions) * 100)
-    
-    const finalGrade = score >= 400 ? 'S-RANK' : score >= 300 ? 'A-RANK' : score >= 200 ? 'B-RANK' : 'C-RANK'
-    const gradeColor = score >= 400 ? 'neon-yellow' : score >= 300 ? 'neon-pink' : score >= 200 ? 'neon-cyan' : 'text-gray-400'
-    
+    const accuracy = totalQuestions ? Math.round((totalCorrect / totalQuestions) * 100) : 0
+    const grade = score >= 400
+      ? { t: 'Luar Biasa! 🌟', d: 'Kamu bintang pajak hari ini!' }
+      : score >= 300
+      ? { t: 'Hebat Banget! 💖', d: 'Sedikit lagi sempurna!' }
+      : score >= 200
+      ? { t: 'Bagus! 🌸', d: 'Terus latihan ya!' }
+      : { t: 'Semangat! 🍀', d: 'Coba lagi, pasti bisa!' }
     return (
-      <div className="max-w-4xl mx-auto">
-        <div className="arcade-bg pixel-box-pink p-8 text-center">
-          <Trophy className={`w-32 h-32 mx-auto mb-6 ${gradeColor}`} />
-          <h2 className="font-pixel text-4xl neon-pink mb-4">QUEST COMPLETE!</h2>
-          
-          <div className="bg-black/40 border-4 border-yellow-400 p-8 mb-6">
-            <div className="font-pixel text-6xl neon-yellow mb-4">{finalGrade}</div>
-            <div className="font-pixel text-3xl text-white mb-6">SCORE: {score}</div>
-            
-            <div className="grid grid-cols-2 gap-4 text-left font-retro text-lg mb-4">
-              <div className="bg-purple-900/40 p-4 border-2 border-purple-500">
-                <span className="text-purple-300">Questions:</span>
-                <span className="float-right text-white font-bold">{totalQuestions}</span>
+      <div className="max-w-3xl mx-auto">
+        <div className="cute-card p-6 sm:p-10 text-center pop-in">
+          <div className="text-6xl sm:text-7xl mb-3 select-none">🏆</div>
+          <h2 className="font-cute text-2xl sm:text-3xl font-extrabold text-[#5b4a68]">{grade.t}</h2>
+          <p className="text-sm text-[#a08bb0] mb-4">{grade.d}</p>
+          <div className="font-cute text-5xl font-extrabold text-[#e85d9e] mb-6">{score} <span className="text-lg text-[#c4b3d1]">poin</span></div>
+          <div className="grid grid-cols-2 gap-3 text-left mb-6">
+            {[
+              ['💜 Total soal', totalQuestions, '#f6f0ff', '#7c5fc9'],
+              ['💚 Benar', totalCorrect, '#e9faf3', '#1d9e6b'],
+              ['🌸 Kurang tepat', totalQuestions - totalCorrect, '#fff3f8', '#e85d9e'],
+              ['✨ Akurasi', `${accuracy}%`, '#fff8ec', '#d99a2b'],
+            ].map(([label, val, bg, fg]) => (
+              <div key={label} className="rounded-2xl p-4" style={{ background: bg }}>
+                <div className="text-xs text-[#a08bb0]">{label}</div>
+                <div className="font-cute text-2xl font-extrabold" style={{ color: fg }}>{val}</div>
               </div>
-              <div className="bg-green-900/40 p-4 border-2 border-green-500">
-                <span className="text-green-300">Correct:</span>
-                <span className="float-right text-white font-bold">{totalCorrect}</span>
-              </div>
-              <div className="bg-red-900/40 p-4 border-2 border-red-500">
-                <span className="text-red-300">Wrong:</span>
-                <span className="float-right text-white font-bold">{totalQuestions - totalCorrect}</span>
-              </div>
-              <div className="bg-cyan-900/40 p-4 border-2 border-cyan-500">
-                <span className="text-cyan-300">Accuracy:</span>
-                <span className="float-right text-white font-bold">{accuracy}%</span>
-              </div>
-            </div>
-            
-            <div className="bg-yellow-900/40 p-4 border-2 border-yellow-500">
-              <div className="font-pixel text-sm neon-cyan mb-2">
-                Benar {totalCorrect} dari {totalQuestions} Soal
-              </div>
-            </div>
+            ))}
           </div>
-
-          <button
-            onClick={startQuest}
-            className="retro-button bg-gradient-to-r from-cyan-600 to-blue-600 text-white px-8 py-4 font-pixel text-xl border-4 border-white"
-          >
-            RETRY QUEST
+          <button onClick={startQuest} className="cute-btn cute-btn-lav w-full sm:w-auto px-10 py-4 text-lg">
+            🔄 Main Lagi
           </button>
         </div>
       </div>
     )
   }
 
-  // PLAYING STATE
   const question = questions[currentQuestion]
-  const multiplier = getMultiplier()
+  if (!question) return null
 
   return (
-    <div className={`max-w-4xl mx-auto w-full ${screenShake ? 'screen-shake' : ''}`}>
-      {/* Boss Monster UI */}
-      <div className="arcade-bg pixel-box-pink p-4 sm:p-6 mb-4 sm:mb-6 text-center">
-        <div className="boss-float mb-3 sm:mb-4">
-          <div className="boss-monster text-5xl sm:text-6xl">👾</div>
+    <div className={`max-w-3xl mx-auto w-full ${shake ? 'soft-shake' : ''}`}>
+      {/* Cute monster */}
+      <div className="cute-card-lav p-4 sm:p-5 mb-3 text-center">
+        <div className="wiggle text-5xl select-none">🧸</div>
+        <div className="font-cute font-bold text-[#7c5fc9] text-sm sm:text-base mt-1">Monster Pajak</div>
+        <div className="bar-track h-3 mt-2">
+          <div className="bar-boss h-full rounded-full transition-all duration-300" style={{ width: `${bossHp}%` }} />
         </div>
-        <div className="font-pixel text-sm sm:text-lg neon-pink mb-2">TAX MONSTER BOSS</div>
-        <div className="bg-gray-900 h-5 sm:h-6 border-4 border-red-500 relative overflow-hidden mb-2">
-          <div 
-            className="bg-gradient-to-r from-red-600 to-red-400 h-full transition-all duration-300"
-            style={{width: `${bossHp}%`}}
-          ></div>
-        </div>
-        <div className="font-pixel text-xs sm:text-sm text-red-400">BOSS HP: {bossHp}/100</div>
+        <div className="text-[11px] text-[#a08bb0] mt-1">{bossHp}/100</div>
       </div>
 
-      {/* Header Stats */}
-      <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-6">
-        {/* HP Bar */}
-        <div className="arcade-bg pixel-box-pink p-2 sm:p-4">
-          <div className="flex items-center gap-1 sm:gap-2 mb-2">
-            <Heart className="text-red-500" size={16} />
-            <span className="font-pixel text-xs sm:text-sm text-white">HP</span>
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-3">
+        <div className="cute-card p-3 text-center">
+          <div className="flex items-center justify-center gap-1 text-xs text-[#a08bb0]"><Heart size={14} className="text-[#ff7eb3]" /> Hati</div>
+          <div className="bar-track h-2.5 mt-1.5">
+            <div className="bar-hp h-full rounded-full transition-all" style={{ width: `${hp}%` }} />
           </div>
-          <div className="bg-red-900 h-4 border-2 border-red-500 relative overflow-hidden">
-            <div 
-              className={`h-full transition-all duration-300 ${hp > 50 ? 'bg-red-500' : 'bg-red-700 animate-pulse'}`}
-              style={{width: `${hp}%`}}
-            ></div>
-          </div>
-          <span className="font-pixel text-[10px] sm:text-xs text-white">{hp}/100</span>
+          <div className="font-cute font-bold text-[#5b4a68] text-sm mt-1">{hp}/100</div>
         </div>
-
-        {/* Score */}
-        <div className="arcade-bg pixel-box-cyan p-2 sm:p-4 text-center">
-          <span className="font-pixel text-xs sm:text-sm neon-cyan">SCORE</span>
-          <div className="font-pixel text-lg sm:text-2xl neon-yellow truncate">{score}</div>
+        <div className="cute-card-mint p-3 text-center">
+          <div className="text-xs text-[#a08bb0]">⭐ Skor</div>
+          <div className="font-cute text-xl font-extrabold text-[#0d4a3a]">{score}</div>
         </div>
-
-        {/* Streak */}
-        <div className="arcade-bg pixel-box-pink p-2 sm:p-4 text-center">
-          <span className="font-pixel text-xs sm:text-sm neon-pink">COMBO</span>
-          <div className="font-pixel text-lg sm:text-2xl neon-cyan">
-            {streak > 0 && `x${multiplier}`}
-            {streak === 0 && '-'}
-          </div>
-          {streak >= 2 && (
-            <div className="font-pixel text-[10px] sm:text-xs neon-yellow blink">{getStreakLabel()}</div>
-          )}
+        <div className="cute-card p-3 text-center">
+          <div className="text-xs text-[#a08bb0]">🔥 Kombo</div>
+          <div className="font-cute text-xl font-extrabold text-[#e85d9e]">{streak > 0 ? `×${multiplier}` : '–'}</div>
+          {streakText && <div className="text-[11px] font-bold text-[#e85d9e]">{streakText}</div>}
         </div>
       </div>
 
-      {/* Question Card */}
-      <div className="arcade-bg pixel-box-cyan p-4 sm:p-6 mb-4 sm:mb-6">
-        <div className="flex justify-between items-center mb-3 sm:mb-4">
-          <span className="font-pixel text-xs sm:text-sm neon-cyan">
-            Q{currentQuestion + 1}/{questions.length}
-          </span>
-          <Trophy className="neon-yellow" size={20} />
+      {/* Question */}
+      <div className="cute-card p-5 sm:p-6 mb-3">
+        <div className="flex justify-between items-center mb-3">
+          <span className="chip bg-[#f6f0ff] text-[#7c5fc9] text-xs px-3 py-1">Soal {currentQuestion + 1}/{questions.length}</span>
+          <span className="text-xs text-[#c4b3d1] flex items-center gap-1"><Star size={12} /> {100 * multiplier} poin</span>
         </div>
-
-        <h3 className="font-retro text-xl sm:text-2xl text-white mb-4 sm:mb-6 leading-snug">
-          {question.question}
-        </h3>
-
-        <div className="grid grid-cols-1 gap-3 sm:gap-4">
+        <h3 className="text-lg sm:text-xl font-bold text-[#5b4a68] leading-snug mb-4">{question.question}</h3>
+        <div className="grid grid-cols-1 gap-2.5">
           {question.options.map((option, idx) => {
-            let btnClass = 'bg-gray-800 border-gray-600 text-white hover:bg-gray-700'
-            
+            let cls = 'answer-idle'
             if (selectedAnswer !== null) {
-              if (idx === question.answerIndex) {
-                btnClass = 'bg-green-600 border-green-400 text-white'
-              } else if (idx === selectedAnswer && !isCorrect) {
-                btnClass = 'bg-red-600 border-red-400 text-white'
-              } else {
-                btnClass = 'bg-gray-900 border-gray-700 text-gray-500'
-              }
+              if (idx === question.answerIndex) cls = 'answer-right'
+              else if (idx === selectedAnswer && !isCorrect) cls = 'answer-wrong'
+              else cls = 'answer-dim'
             }
-
+            const letters = ['A', 'B', 'C', 'D']
+            const dots = ['#ffd1e0', '#e3d4ff', '#b8f0d4', '#ffe9bf']
             return (
               <button
                 key={idx}
                 onClick={() => handleAnswer(idx)}
                 disabled={selectedAnswer !== null}
-                className={`retro-button px-4 py-4 sm:px-6 font-retro text-lg border-4 text-left transition-all touch-manipulation min-h-[56px] ${btnClass}`}
+                className={`rounded-2xl px-4 py-3.5 text-left font-semibold text-[15px] sm:text-base transition-all min-h-[56px] flex items-center gap-3 ${cls}`}
               >
-                <span className="font-pixel mr-2">
-                  {String.fromCharCode(65 + idx)}.
+                <span className="w-8 h-8 shrink-0 rounded-full flex items-center justify-center font-cute font-extrabold text-sm" style={{ background: dots[idx % 4], color: '#5b4a68' }}>
+                  {letters[idx] || idx + 1}
                 </span>
-                {option}
+                <span>{option}</span>
               </button>
             )
           })}
         </div>
       </div>
 
-      {/* Explanation Modal */}
+      {/* Explanation */}
       {showExplanation && (
-        <div className="arcade-bg pixel-box-pink p-6 mb-6">
-          <div className="flex items-center gap-3 mb-4">
-            {isCorrect ? (
-              <>
-                <CheckCircle className="text-green-400" size={32} />
-                <span className="font-pixel text-2xl neon-cyan">CORRECT!</span>
-                {streak >= 2 && (
-                  <span className="font-pixel text-xl neon-yellow blink ml-auto">
-                    +{100 * multiplier} pts
-                  </span>
-                )}
-              </>
-            ) : (
-              <>
-                <X className="text-red-400" size={32} />
-                <span className="font-pixel text-2xl neon-pink">WRONG!</span>
-                <span className="font-pixel text-xl text-red-400 ml-auto">-20 HP</span>
-              </>
-            )}
+        <div className={`rounded-3xl p-5 mb-3 pop-in ${isCorrect ? 'cute-card-mint' : 'cute-card'}`}>
+          <div className="flex items-center gap-2 mb-2">
+            {isCorrect
+              ? <><CheckCircle size={24} className="text-[#1d9e6b]" /><span className="font-cute text-xl font-extrabold text-[#0d4a3a]">Betul! Yay! 🎉</span></>
+              : <><X size={24} className="text-[#ff7eb3]" /><span className="font-cute text-xl font-extrabold text-[#e85d9e]">Belum tepat 💕</span></>}
+            {isCorrect && streak >= 2 && <span className="chip bg-[#fff8ec] text-[#d99a2b] text-xs px-3 py-1 ml-auto">+{100 * multiplier} poin</span>}
+            {!isCorrect && <span className="chip bg-[#fff3f8] text-[#e85d9e] text-xs px-3 py-1 ml-auto">−20 hati</span>}
           </div>
-
-          <div className="bg-black/40 border-2 border-cyan-400 p-4 mb-4">
-            <p className="font-retro text-lg text-gray-200">{question.explanation}</p>
-          </div>
-
-          <button
-            onClick={nextQuestion}
-            className="retro-button bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-4 font-pixel text-base sm:text-lg border-4 border-white w-full touch-manipulation"
-          >
-            {currentQuestion < questions.length - 1 ? 'NEXT ➜' : 'FINISH QUEST'}
+          <p className="text-[15px] text-[#5b4a68] leading-relaxed bg-white/70 rounded-2xl p-3.5">{question.explanation}</p>
+          <button onClick={nextQuestion} className={`cute-btn w-full mt-3 py-4 text-base ${isCorrect ? 'cute-btn-mint' : 'cute-btn-pink'}`}>
+            {currentQuestion < questions.length - 1 ? 'Lanjut ➜' : 'Lihat Hasil 💖'}
           </button>
         </div>
       )}

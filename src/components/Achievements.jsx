@@ -1,153 +1,61 @@
-import { useState, useEffect } from 'react'
-import { Trophy, Star, Zap, Target, X } from 'lucide-react'
-import { playLevelUpSound } from '../utils/soundEffects'
+import { useState } from 'react'
+import { Trophy, Star } from 'lucide-react'
 
 const ACHIEVEMENTS = [
-  {
-    id: 'tax_novice',
-    name: 'Tax Novice',
-    description: 'Complete your first quiz',
-    icon: '🎓',
-    requirement: { type: 'quiz_completed', count: 1 }
-  },
-  {
-    id: 'combo_master',
-    name: 'Combo Master',
-    description: 'Achieve 5x streak',
-    icon: '⚡',
-    requirement: { type: 'max_streak', count: 5 }
-  },
-  {
-    id: 'fiscal_warrior',
-    name: 'Fiscal Warrior',
-    description: 'Score 800+ points in a quiz',
-    icon: '⚔️',
-    requirement: { type: 'high_score', count: 800 }
-  },
-  {
-    id: 'perfect_score',
-    name: 'Perfect Score',
-    description: 'Answer all 10 questions correctly',
-    icon: '💯',
-    requirement: { type: 'perfect_quiz', count: 10 }
-  },
-  {
-    id: 'calculator_pro',
-    name: 'Calculator Pro',
-    description: 'Use TER Calculator 5 times',
-    icon: '🧮',
-    requirement: { type: 'calculator_used', count: 5 }
-  },
-  {
-    id: 'boss_slayer',
-    name: 'Boss Slayer',
-    description: 'Defeat Tax Monster Boss',
-    icon: '👾',
-    requirement: { type: 'boss_defeated', count: 1 }
-  }
+  { id: 'tax_novice', name: 'Langkah Pertama 🌷', description: 'Selesaikan kuis pertamamu', icon: '🎓', requirement: { type: 'quiz_completed', count: 1 } },
+  { id: 'combo_master', name: 'Kombo Master 🔥', description: 'Dapat 5 jawaban beruntun', icon: '⚡', requirement: { type: 'max_streak', count: 5 } },
+  { id: 'fiscal_warrior', name: 'Pejuang Pajak ⚔️', description: 'Raih 800+ poin dalam satu kuis', icon: '💖', requirement: { type: 'high_score', count: 800 } },
+  { id: 'perfect_score', name: 'Sempurna! 💯', description: 'Jawab semua 10 soal dengan benar', icon: '🌟', requirement: { type: 'perfect_quiz', count: 10 } },
+  { id: 'calculator_pro', name: 'Ahli Hitung 🧮', description: 'Pakai kalkulator 5 kali', icon: '🍰', requirement: { type: 'calculator_used', count: 5 } },
+  { id: 'boss_slayer', name: 'Penakluk Monster 🧸', description: 'Kalahkan Monster Pajak', icon: '🏅', requirement: { type: 'boss_defeated', count: 1 } },
 ]
 
 export default function Achievements({ isOpen, onClose }) {
-  const [unlockedAchievements, setUnlockedAchievements] = useState([])
-  const [stats, setStats] = useState({})
-
-  useEffect(() => {
-    loadAchievements()
-    loadStats()
-  }, [])
-
-  const loadAchievements = () => {
-    const saved = localStorage.getItem('taxquest_achievements')
-    if (saved) {
-      setUnlockedAchievements(JSON.parse(saved))
-    }
-  }
-
-  const loadStats = () => {
-    const saved = localStorage.getItem('taxquest_stats')
-    if (saved) {
-      setStats(JSON.parse(saved))
-    }
-  }
-
-  const isUnlocked = (achievementId) => {
-    return unlockedAchievements.includes(achievementId)
-  }
-
-  const getProgress = (achievement) => {
-    const { type, count } = achievement.requirement
-    const current = stats[type] || 0
-    return Math.min(Math.round((current / count) * 100), 100)
-  }
+  const [unlockedAchievements, setUnlockedAchievements] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('taxquest_achievements')) || [] } catch { return [] }
+  })
+  const [stats, setStats] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('taxquest_stats')) || {} } catch { return {} }
+  })
 
   if (!isOpen) return null
+  const isUnlocked = (id) => unlockedAchievements.includes(id)
+  const getProgress = (a) => {
+    const { type, count } = a.requirement
+    return Math.min(Math.round(((stats[type] || 0) / count) * 100), 100)
+  }
 
   return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-      <div className="arcade-bg pixel-box-cyan max-w-4xl w-full max-h-[90vh] overflow-y-auto p-8">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="font-pixel text-3xl neon-yellow">BADGES & ACHIEVEMENTS</h2>
-          <button
-            onClick={onClose}
-            className="retro-button bg-red-600 border-4 border-red-400 p-2 hover:bg-red-700"
-          >
-            <X size={24} />
-          </button>
+    <div className="fixed inset-0 bg-[#5b4a68]/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <div className="bg-[#fff7fb] rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-5 sm:p-8 pop-in" onClick={(e) => e.stopPropagation()}>
+        <div className="flex justify-between items-center mb-1">
+          <h2 className="font-cute text-2xl font-extrabold text-[#5b4a68]">🏆 Koleksi Lencana</h2>
+          <button onClick={onClose} className="w-10 h-10 rounded-full bg-[#fff3f8] text-[#e85d9e] font-cute font-extrabold text-lg">✕</button>
         </div>
+        <p className="text-sm text-[#a08bb0] mb-5">Kumpulin semuanya ya, semangat! 💕</p>
 
-        <div className="grid md:grid-cols-2 gap-4">
-          {ACHIEVEMENTS.map((achievement) => {
-            const unlocked = isUnlocked(achievement.id)
-            const progress = getProgress(achievement)
-
+        <div className="grid sm:grid-cols-2 gap-3">
+          {ACHIEVEMENTS.map((a) => {
+            const unlocked = isUnlocked(a.id)
+            const progress = getProgress(a)
             return (
-              <div
-                key={achievement.id}
-                className={`p-6 border-4 transition-all ${
-                  unlocked
-                    ? 'bg-yellow-900/40 border-yellow-500 pixel-box-pink'
-                    : 'bg-gray-900/40 border-gray-600'
-                }`}
-              >
-                <div className="flex items-start gap-4">
-                  <div
-                    className={`text-5xl ${
-                      unlocked ? 'grayscale-0' : 'grayscale opacity-50'
-                    }`}
-                  >
-                    {achievement.icon}
-                  </div>
-
-                  <div className="flex-1">
-                    <h3
-                      className={`font-pixel text-lg mb-2 ${
-                        unlocked ? 'neon-yellow' : 'text-gray-500'
-                      }`}
-                    >
-                      {achievement.name}
-                    </h3>
-                    <p className="font-retro text-sm text-gray-300 mb-3">
-                      {achievement.description}
-                    </p>
-
+              <div key={a.id} className={`rounded-2xl p-4 border-2 ${unlocked ? 'bg-white border-[#ffd1e0]' : 'bg-white/60 border-pink-50'}`}>
+                <div className="flex items-start gap-3">
+                  <div className={`text-4xl ${unlocked ? '' : 'grayscale opacity-40'}`}>{a.icon}</div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className={`font-cute font-bold ${unlocked ? 'text-[#e85d9e]' : 'text-[#c4b3d1]'}`}>{a.name}</h3>
+                    <p className="text-xs text-[#a08bb0] mb-2">{a.description}</p>
                     {!unlocked && (
-                      <div>
-                        <div className="bg-gray-900 h-3 border-2 border-gray-600 relative overflow-hidden mb-1">
-                          <div
-                            className="bg-cyan-500 h-full transition-all duration-300"
-                            style={{ width: `${progress}%` }}
-                          ></div>
+                      <>
+                        <div className="bar-track h-2">
+                          <div className="bar-boss h-full rounded-full transition-all" style={{ width: `${progress}%` }} />
                         </div>
-                        <div className="font-pixel text-xs text-gray-400">
-                          Progress: {progress}%
-                        </div>
-                      </div>
+                        <div className="text-[11px] text-[#c4b3d1] mt-1">{progress}%</div>
+                      </>
                     )}
-
                     {unlocked && (
-                      <div className="flex items-center gap-2">
-                        <Trophy className="text-yellow-400" size={16} />
-                        <span className="font-pixel text-xs neon-cyan">UNLOCKED!</span>
+                      <div className="chip inline-flex items-center gap-1 bg-[#e9faf3] text-[#1d9e6b] text-[11px] px-2.5 py-1">
+                        <Trophy size={12} /> Terbuka!
                       </div>
                     )}
                   </div>
@@ -157,25 +65,20 @@ export default function Achievements({ isOpen, onClose }) {
           })}
         </div>
 
-        <div className="mt-8 bg-black/40 border-4 border-purple-500 p-6">
-          <h3 className="font-pixel text-xl neon-pink mb-4">YOUR STATS</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 font-retro">
-            <div className="text-center">
-              <div className="font-pixel text-2xl neon-cyan">{stats.quiz_completed || 0}</div>
-              <div className="text-xs text-gray-400">Quizzes</div>
-            </div>
-            <div className="text-center">
-              <div className="font-pixel text-2xl neon-yellow">{stats.max_streak || 0}</div>
-              <div className="text-xs text-gray-400">Max Streak</div>
-            </div>
-            <div className="text-center">
-              <div className="font-pixel text-2xl neon-pink">{stats.high_score || 0}</div>
-              <div className="text-xs text-gray-400">High Score</div>
-            </div>
-            <div className="text-center">
-              <div className="font-pixel text-2xl neon-cyan">{unlockedAchievements.length}</div>
-              <div className="text-xs text-gray-400">Achievements</div>
-            </div>
+        <div className="mt-4 bg-white rounded-2xl border border-purple-100 p-5">
+          <h3 className="font-cute font-bold text-[#7c5fc9] mb-3 flex items-center gap-1.5"><Star size={16} /> Statistik kamu</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+            {[
+              [stats.quiz_completed || 0, 'Kuis selesai'],
+              [stats.max_streak || 0, 'Kombo max'],
+              [stats.high_score || 0, 'Skor tertinggi'],
+              [unlockedAchievements.length, 'Lencana'],
+            ].map(([v, l]) => (
+              <div key={l} className="bg-[#f6f0ff] rounded-2xl p-3">
+                <div className="font-cute text-2xl font-extrabold text-[#7c5fc9]">{v}</div>
+                <div className="text-[11px] text-[#a08bb0]">{l}</div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -183,43 +86,31 @@ export default function Achievements({ isOpen, onClose }) {
   )
 }
 
-// Helper function to unlock achievement
 export function unlockAchievement(achievementId) {
-  const saved = localStorage.getItem('taxquest_achievements')
-  const unlocked = saved ? JSON.parse(saved) : []
-  
-  if (!unlocked.includes(achievementId)) {
-    unlocked.push(achievementId)
-    localStorage.setItem('taxquest_achievements', JSON.stringify(unlocked))
-    playLevelUpSound()
-    return true
-  }
+  try {
+    const unlocked = JSON.parse(localStorage.getItem('taxquest_achievements')) || []
+    if (!unlocked.includes(achievementId)) {
+      unlocked.push(achievementId)
+      localStorage.setItem('taxquest_achievements', JSON.stringify(unlocked))
+      try { import('../utils/soundEffects').then(m => m.playLevelUpSound?.()) } catch {}
+      return true
+    }
+  } catch {}
   return false
 }
 
-// Helper function to update stats
 export function updateStats(statType, value) {
-  const saved = localStorage.getItem('taxquest_stats')
-  const stats = saved ? JSON.parse(saved) : {}
-  
-  // Update stat (use max for some types)
-  if (statType === 'max_streak' || statType === 'high_score') {
-    stats[statType] = Math.max(stats[statType] || 0, value)
-  } else {
-    stats[statType] = (stats[statType] || 0) + value
-  }
-  
-  localStorage.setItem('taxquest_stats', JSON.stringify(stats))
-  
-  // Check achievements
-  checkAchievements(stats)
-}
-
-function checkAchievements(stats) {
-  ACHIEVEMENTS.forEach((achievement) => {
-    const { type, count } = achievement.requirement
-    if ((stats[type] || 0) >= count) {
-      unlockAchievement(achievement.id)
+  try {
+    const stats = JSON.parse(localStorage.getItem('taxquest_stats')) || {}
+    if (statType === 'max_streak' || statType === 'high_score') {
+      stats[statType] = Math.max(stats[statType] || 0, value)
+    } else {
+      stats[statType] = (stats[statType] || 0) + value
     }
-  })
+    localStorage.setItem('taxquest_stats', JSON.stringify(stats))
+    ACHIEVEMENTS.forEach((a) => {
+      const { type, count } = a.requirement
+      if ((stats[type] || 0) >= count) unlockAchievement(a.id)
+    })
+  } catch {}
 }
