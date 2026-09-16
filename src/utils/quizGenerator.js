@@ -5,7 +5,7 @@
 
 const API_ENDPOINT = 'https://sakithati.bond/v1/chat/completions';
 const API_KEY = 'elf-live-0f00da3f6da781df2a3887ca935d8407';
-const MODEL = 'claude-opus-4-8';
+const MODEL = 'elf/qwen3.8-flash';
 
 /**
  * Fetch auto-generated quiz questions
@@ -68,46 +68,78 @@ MULAI GENERATE SEKARANG (JSON array only):`
 
   console.log(`🎲 Quiz Request - SessionID: ${sessionId}, Topics: ${selectedTopics}`)
 
+  // Retry wrapper: endpoint can be flaky (524 timeouts), so we retry before falling back
+  const callAPI = async () => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 60000);
+    try {
+      const response = await fetch(API_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${API_KEY}`,
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          model: MODEL,
+          messages: [
+            {
+              role: 'system',
+              content: systemPrompt
+            },
+            {
+              role: 'user',
+              content: userPrompt
+            }
+          ],
+          temperature: 1.0, // Max creativity
+          max_tokens: 2500,
+          top_p: 0.95
+        }),
+        cache: 'no-store',
+        signal: controller.signal
+      });
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+      return await response.json();
+    } finally {
+      clearTimeout(timer);
+    }
+  };
+
+  const extractQuestions = (raw) => {
+    let text = (raw.choices?.[0]?.message?.content || '').trim();
+    if (!text && raw.choices?.[0]?.message?.reasoning_content) {
+      text = raw.choices[0].message.reasoning_content;
+    }
+    if (text.startsWith('```')) {
+      text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    }
+    const s = text.indexOf('[');
+    const e = text.lastIndexOf(']');
+    if (s === -1 || e === -1) throw new Error('No JSON array in response');
+    return JSON.parse(text.slice(s, e + 1));
+  };
+
   try {
-    const response = await fetch(API_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${API_KEY}`
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        messages: [
-          {
-            role: 'system',
-            content: systemPrompt
-          },
-          {
-            role: 'user',
-            content: userPrompt
-          }
-        ],
-        temperature: 1.0, // Max creativity
-        max_tokens: 4000,
-        top_p: 0.95
-      }),
-      cache: 'no-store'
-    });
-
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    let questions;
+    let lastErr;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const data = await callAPI();
+        questions = extractQuestions(data);
+        break;
+      } catch (err) {
+        lastErr = err;
+        console.warn(`⚠ Quiz API attempt ${attempt} failed: ${err.message}`);
+      }
+    }
+    if (!questions) {
+      throw lastErr || new Error('All API attempts failed');
     }
 
-    const data = await response.json();
-    const content = data.choices[0].message.content.trim();
-    
-    // Clean markdown if present
-    let cleanedContent = content;
-    if (content.startsWith('```')) {
-      cleanedContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-    }
-    
-    const questions = JSON.parse(cleanedContent);
+    const content = questions; // already parsed array
     
     // Validate structure
     if (!Array.isArray(questions) || questions.length < 10) {
