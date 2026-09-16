@@ -8,6 +8,25 @@ body {
   background: #0f051d;
   color: #fff;
   font-family: 'VT323', monospace;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+img, svg { max-width: 100%; }
+button { touch-action: manipulation; }
+input[type="range"] { touch-action: pan-x; min-height: 32px; }
+
+/* Slim neon scrollbar for horizontal tab rails */
+.overflow-x-auto::-webkit-scrollbar { height: 6px; }
+.overflow-x-auto::-webkit-scrollbar-track { background: rgba(0,0,0,.4); }
+.overflow-x-auto::-webkit-scrollbar-thumb { background: #7c3aed; border-radius: 3px; }
+
+@media (max-width: 640px) {
+  /* Cheaper glow on small GPUs: keep neon look, drop heavy multi-layer shadows */
+  .pixel-box, .pixel-box-pink, .pixel-box-cyan { box-shadow: none; }
+  .boss-monster { font-size: 3rem; }
+  .neon-text { animation: none; }
 }
 
 .pixel-border {

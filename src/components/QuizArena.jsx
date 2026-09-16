@@ -109,14 +109,12 @@ export default function QuizArena() {
       setShowExplanation(false)
       setIsCorrect(null)
     } else {
-      // Quiz finished - calculate final score explicitly
-      const totalCorrect = userAnswers.filter(a => a.isCorrect).length + (isCorrect ? 1 : 0)
-      const calculatedFinalScore = score + (isCorrect ? 100 * Math.min(streak + 1, 3) : 0)
-      
-      // Update stats with calculated values
+      // Quiz finished — persistent hero XP + accurate final score
+      const finalScore = score
       updateStats('quiz_completed', 1)
-      updateStats('high_score', calculatedFinalScore)
+      updateStats('high_score', finalScore)
       updateStats('max_streak', streak)
+      try { window.dispatchEvent(new CustomEvent('taxquest:xp', { detail: { xp: finalScore } })) } catch {}
       
       // Check if boss defeated
       if (bossHp === 0) {
@@ -129,7 +127,7 @@ export default function QuizArena() {
       }
       
       // Check high score achievement
-      if (calculatedFinalScore >= 800) {
+      if (finalScore >= 800) {
         unlockAchievement('fiscal_warrior')
       }
       
@@ -148,11 +146,11 @@ export default function QuizArena() {
     return Math.min(streak + 1, 3)
   }
 
-  // UI RENDER
+  // UI RENDER — wrapped in responsive max width, forgiving on small screens
   if (gameState === 'menu') {
     return (
-      <div className="max-w-4xl mx-auto">
-        <div className="arcade-bg pixel-box-pink p-8 text-center">
+      <div className="max-w-4xl mx-auto w-full">
+        <div className="arcade-bg pixel-box-pink p-4 sm:p-8 text-center">
           <Trophy className="w-24 h-24 mx-auto mb-6 neon-yellow" />
           <h2 className="font-pixel text-3xl neon-pink mb-4">QUIZ ARENA</h2>
           <p className="font-retro text-xl text-gray-300 mb-6">
@@ -171,10 +169,11 @@ export default function QuizArena() {
 
           <button
             onClick={startQuest}
-            className="retro-button bg-gradient-to-r from-pink-600 to-purple-600 text-white px-8 py-4 font-pixel text-xl border-4 border-white hover:scale-105 transition-transform"
+            className="retro-button bg-gradient-to-r from-pink-600 to-purple-600 text-white px-6 py-4 sm:px-8 font-pixel text-base sm:text-xl border-4 border-white w-full sm:w-auto hover:scale-105 transition-transform touch-manipulation"
           >
             🎮 START NEW QUEST
           </button>
+          <p className="font-retro text-sm text-gray-500 mt-3">Soal AI fresh tiap quest • offline fallback tersedia</p>
         </div>
       </div>
     )
@@ -259,29 +258,29 @@ export default function QuizArena() {
   const multiplier = getMultiplier()
 
   return (
-    <div className={`max-w-4xl mx-auto ${screenShake ? 'screen-shake' : ''}`}>
+    <div className={`max-w-4xl mx-auto w-full ${screenShake ? 'screen-shake' : ''}`}>
       {/* Boss Monster UI */}
-      <div className="arcade-bg pixel-box-pink p-6 mb-6 text-center">
-        <div className="boss-float mb-4">
-          <div className="boss-monster">👾</div>
+      <div className="arcade-bg pixel-box-pink p-4 sm:p-6 mb-4 sm:mb-6 text-center">
+        <div className="boss-float mb-3 sm:mb-4">
+          <div className="boss-monster text-5xl sm:text-6xl">👾</div>
         </div>
-        <div className="font-pixel text-lg neon-pink mb-2">TAX MONSTER BOSS</div>
-        <div className="bg-gray-900 h-6 border-4 border-red-500 relative overflow-hidden mb-2">
+        <div className="font-pixel text-sm sm:text-lg neon-pink mb-2">TAX MONSTER BOSS</div>
+        <div className="bg-gray-900 h-5 sm:h-6 border-4 border-red-500 relative overflow-hidden mb-2">
           <div 
             className="bg-gradient-to-r from-red-600 to-red-400 h-full transition-all duration-300"
             style={{width: `${bossHp}%`}}
           ></div>
         </div>
-        <div className="font-pixel text-sm text-red-400">BOSS HP: {bossHp}/100</div>
+        <div className="font-pixel text-xs sm:text-sm text-red-400">BOSS HP: {bossHp}/100</div>
       </div>
 
       {/* Header Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-6">
         {/* HP Bar */}
-        <div className="arcade-bg pixel-box-pink p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Heart className="text-red-500" size={20} />
-            <span className="font-pixel text-sm text-white">HP</span>
+        <div className="arcade-bg pixel-box-pink p-2 sm:p-4">
+          <div className="flex items-center gap-1 sm:gap-2 mb-2">
+            <Heart className="text-red-500" size={16} />
+            <span className="font-pixel text-xs sm:text-sm text-white">HP</span>
           </div>
           <div className="bg-red-900 h-4 border-2 border-red-500 relative overflow-hidden">
             <div 
@@ -289,42 +288,42 @@ export default function QuizArena() {
               style={{width: `${hp}%`}}
             ></div>
           </div>
-          <span className="font-pixel text-xs text-white">{hp}/100</span>
+          <span className="font-pixel text-[10px] sm:text-xs text-white">{hp}/100</span>
         </div>
 
         {/* Score */}
-        <div className="arcade-bg pixel-box-cyan p-4 text-center">
-          <span className="font-pixel text-sm neon-cyan">SCORE</span>
-          <div className="font-pixel text-2xl neon-yellow">{score}</div>
+        <div className="arcade-bg pixel-box-cyan p-2 sm:p-4 text-center">
+          <span className="font-pixel text-xs sm:text-sm neon-cyan">SCORE</span>
+          <div className="font-pixel text-lg sm:text-2xl neon-yellow truncate">{score}</div>
         </div>
 
         {/* Streak */}
-        <div className="arcade-bg pixel-box-pink p-4 text-center">
-          <span className="font-pixel text-sm neon-pink">COMBO</span>
-          <div className="font-pixel text-2xl neon-cyan">
+        <div className="arcade-bg pixel-box-pink p-2 sm:p-4 text-center">
+          <span className="font-pixel text-xs sm:text-sm neon-pink">COMBO</span>
+          <div className="font-pixel text-lg sm:text-2xl neon-cyan">
             {streak > 0 && `x${multiplier}`}
             {streak === 0 && '-'}
           </div>
           {streak >= 2 && (
-            <div className="font-pixel text-xs neon-yellow blink">{getStreakLabel()}</div>
+            <div className="font-pixel text-[10px] sm:text-xs neon-yellow blink">{getStreakLabel()}</div>
           )}
         </div>
       </div>
 
       {/* Question Card */}
-      <div className="arcade-bg pixel-box-cyan p-6 mb-6">
-        <div className="flex justify-between items-center mb-4">
-          <span className="font-pixel text-sm neon-cyan">
-            QUESTION {currentQuestion + 1}/{questions.length}
+      <div className="arcade-bg pixel-box-cyan p-4 sm:p-6 mb-4 sm:mb-6">
+        <div className="flex justify-between items-center mb-3 sm:mb-4">
+          <span className="font-pixel text-xs sm:text-sm neon-cyan">
+            Q{currentQuestion + 1}/{questions.length}
           </span>
-          <Trophy className="neon-yellow" size={24} />
+          <Trophy className="neon-yellow" size={20} />
         </div>
 
-        <h3 className="font-retro text-2xl text-white mb-6">
+        <h3 className="font-retro text-xl sm:text-2xl text-white mb-4 sm:mb-6 leading-snug">
           {question.question}
         </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-3 sm:gap-4">
           {question.options.map((option, idx) => {
             let btnClass = 'bg-gray-800 border-gray-600 text-white hover:bg-gray-700'
             
@@ -343,7 +342,7 @@ export default function QuizArena() {
                 key={idx}
                 onClick={() => handleAnswer(idx)}
                 disabled={selectedAnswer !== null}
-                className={`retro-button px-6 py-4 font-retro text-lg border-4 text-left transition-all ${btnClass}`}
+                className={`retro-button px-4 py-4 sm:px-6 font-retro text-lg border-4 text-left transition-all touch-manipulation min-h-[56px] ${btnClass}`}
               >
                 <span className="font-pixel mr-2">
                   {String.fromCharCode(65 + idx)}.
@@ -384,9 +383,9 @@ export default function QuizArena() {
 
           <button
             onClick={nextQuestion}
-            className="retro-button bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 font-pixel text-lg border-4 border-white w-full"
+            className="retro-button bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-4 font-pixel text-base sm:text-lg border-4 border-white w-full touch-manipulation"
           >
-            {currentQuestion < questions.length - 1 ? 'NEXT QUESTION' : 'FINISH QUEST'}
+            {currentQuestion < questions.length - 1 ? 'NEXT ➜' : 'FINISH QUEST'}
           </button>
         </div>
       )}

@@ -8,9 +8,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
-    <!-- Eruda Console for mobile debugging -->
+    <!-- Eruda Console (dev only — enable with ?debug=1) -->
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-    <script>eruda.init();</script>
+    <script>
+      if (new URLSearchParams(location.search).get('debug') === '1') eruda.init();
+    </script>
   </head>
   <body>
     <div id="root"></div>
