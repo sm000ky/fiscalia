@@ -4,6 +4,10 @@ import QuizArena from './components/QuizArena'
 import TERCalculator from './components/TERCalculator'
 import Achievements from './components/Achievements'
 import ToolsHub from './components/ToolsHub'
+import EasterEggs, { EmojiEasterEgg } from './components/EasterEggs'
+import FloatingControls from './components/FloatingControls'
+import { initCursorTrail, toggleCursorTrail } from './utils/cursorEffects'
+import { celebrateAchievement } from './utils/confetti'
 
 function App() {
   const [activeTab, setActiveTab] = useState('quest')
@@ -22,6 +26,22 @@ function App() {
   })
   const heroLevel = Math.max(1, Math.floor(heroXP / 1000) + 1)
   const xpInLevel = heroXP % 1000
+
+  // Initialize cursor trail
+  useEffect(() => {
+    const trail = initCursorTrail()
+    
+    // Listen for toggle events
+    const handleCursorToggle = (e) => {
+      toggleCursorTrail(e.detail.enabled)
+    }
+    
+    window.addEventListener('taxquest:cursorTrailToggle', handleCursorToggle)
+    
+    return () => {
+      window.removeEventListener('taxquest:cursorTrailToggle', handleCursorToggle)
+    }
+  }, [])
 
   useEffect(() => {
     const onXp = (e) => {
@@ -56,7 +76,11 @@ function App() {
       <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-pink-100 dark:border-purple-800/50">
         <div className="mx-auto max-w-6xl px-4 py-3 sm:py-4">
           <div className="flex items-center gap-3">
-            <div className="floaty text-4xl sm:text-5xl select-none">🌸</div>
+            <EmojiEasterEgg 
+              emoji="🌸" 
+              onClick={() => celebrateAchievement()}
+              className="floaty text-4xl sm:text-5xl"
+            />
             <div className="min-w-0 flex-1">
               <h1 className="font-cute text-xl sm:text-2xl font-extrabold text-[#e85d9e] dark:text-[#ff9ec6] leading-tight truncate">
                 TaxQuest 💗 Belajar Pajak Jadi Seru
@@ -241,6 +265,10 @@ function App() {
 
       {/* Achievements Modal */}
       <Achievements isOpen={showAchievements} onClose={() => setShowAchievements(false)} />
+      
+      {/* Easter Eggs & Floating Controls */}
+      <EasterEggs />
+      <FloatingControls />
     </div>
   )
 }

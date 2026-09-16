@@ -5,6 +5,7 @@ import { playCorrectSound, playWrongSound, playClickSound, playComboSound } from
 import { updateStats, unlockAchievement } from './Achievements'
 import { celebrateCorrect, celebrateCombo, celebrateVictory } from '../utils/confetti'
 import { getRandomMessage, getVictoryMessage } from '../utils/messages'
+import CuteLoading from './CuteLoading'
 
 export default function QuizArena() {
   const [gameState, setGameState] = useState('menu')
@@ -148,12 +149,7 @@ export default function QuizArena() {
     return (
       <div className="max-w-3xl mx-auto">
         <div className="cute-card-lav p-10 sm:p-14 text-center pop-in">
-          <div className="text-6xl mb-4 floaty select-none">🌀</div>
-          <h2 className="font-cute text-xl sm:text-2xl font-bold text-[#7c5fc9]">Menyiapkan soal manis...</h2>
-          <p className="text-sm text-[#a08bb0] mt-1 mb-5">Sabar ya, monsternya lagi dandan 💅</p>
-          <div className="bar-track h-3 max-w-xs mx-auto">
-            <div className="bar-boss h-full rounded-full animate-pulse" style={{ width: '65%' }} />
-          </div>
+          <CuteLoading />
         </div>
       </div>
     )
