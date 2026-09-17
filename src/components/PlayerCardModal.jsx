@@ -170,11 +170,25 @@ export default function PlayerCardModal({ isOpen, onClose, player }) {
 
   const downloadCard = async () => {
     try {
+      // Tunggu webfont (Baloo 2 / Nunito) ready agar hasil PNG tidak fallback & berantakan
+      try { await document.fonts.ready } catch { /* abaikan */ }
+      await new Promise((r) => setTimeout(r, 120))
       const mod = await import('html2canvas')
       const html2canvas = mod.default || mod
       const el = cardRef.current
       if (!el) return
-      const canvas = await html2canvas(el, { scale: 2, useCORS: true, backgroundColor: null, logging: false })
+      const canvas = await html2canvas(el, {
+        scale: 3,
+        useCORS: true,
+        backgroundColor: null,
+        logging: false,
+        onclone: (doc) => {
+          // Paksa font eksplisit di clone agar html2canvas tidak pakai fallback serif
+          const style = doc.createElement('style')
+          style.textContent = `* { letter-spacing: normal !important; } .font-cute { font-family: 'Baloo 2','Nunito',system-ui,sans-serif !important; }`
+          doc.head.appendChild(style)
+        },
+      })
       const url = canvas.toDataURL('image/png')
       const a = document.createElement('a')
       a.href = url
@@ -203,16 +217,16 @@ export default function PlayerCardModal({ isOpen, onClose, player }) {
           style={{ background: currentPalette.bgGradient, border: '2px solid ' + currentPalette.borderColor, boxShadow: '0 0 40px ' + currentPalette.glowColor }}
         >
           {/* Header row: kiri title, kanan rank badge */}
-          <div className="flex items-center justify-between gap-2">
-            <div className="text-left text-white" style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', opacity: 0.75, textShadow: '0 1px 6px rgba(0,0,0,0.8)' }}>
+          <div className="flex items-center justify-between gap-2" style={{ minWidth: 0 }}>
+            <div className="text-left text-white flex-1" style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', opacity: 0.75, textShadow: '0 1px 6px rgba(0,0,0,0.8)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0 }}>
               TAXQUEST • PLAYER CARD
             </div>
             <div
-              className="flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap"
-              style={{ background: 'rgba(0,0,0,0.4)', border: `1px solid ${currentPalette.accent}88`, color: '#ffffff', textShadow: '0 1px 6px rgba(0,0,0,0.9)' }}
+              className="flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap flex-shrink-0"
+              style={{ background: 'rgba(0,0,0,0.4)', border: `1px solid ${currentPalette.accent}88`, color: '#ffffff', textShadow: '0 1px 6px rgba(0,0,0,0.9)', maxWidth: '60%', overflow: 'hidden', textOverflow: 'ellipsis' }}
             >
               <span>👑</span>
-              <span>{rankInfo.title}</span>
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{rankInfo.title}</span>
             </div>
           </div>
 
@@ -227,7 +241,7 @@ export default function PlayerCardModal({ isOpen, onClose, player }) {
           {/* Nickname */}
           <h3
             className="font-cute text-2xl font-extrabold break-words"
-            style={{ marginTop: 12, paddingBottom: 4, color: '#ffffff', textShadow: '0 2px 8px rgba(0,0,0,0.9)', lineHeight: 1.4 }}
+            style={{ marginTop: 12, paddingBottom: 4, color: '#ffffff', textShadow: '0 2px 8px rgba(0,0,0,0.9)', lineHeight: 1.4, overflowWrap: 'anywhere', wordBreak: 'break-word', paddingLeft: 8, paddingRight: 8 }}
           >
             {name}
           </h3>
@@ -258,12 +272,12 @@ export default function PlayerCardModal({ isOpen, onClose, player }) {
           </div>
 
           {/* Quote box — selebar stat grid */}
-          <div className="rounded-2xl w-full" style={{ marginTop: 12, padding: '10px 16px', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.2)' }}>
-            <p className="text-xs text-white font-semibold" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.9)' }}>
+          <div className="rounded-2xl w-full" style={{ marginTop: 12, padding: '10px 16px', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.2)', overflow: 'hidden' }}>
+            <p className="text-xs text-white font-semibold" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.9)', overflowWrap: 'break-word', wordBreak: 'break-word', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
               💌 {isSelf ? quote : `Skor terbaik: ${best} poin`}
             </p>
           </div>
-          <div className="text-[10px] text-white/70 mt-3" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.9)' }}>
+          <div className="text-[10px] text-white/70 mt-3" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.9)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {currentPalette.name} • taxquest.vercel.app 💗
           </div>
         </div>
