@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Calculator, Receipt, Building2, Landmark, BookOpenCheck, TableProperties } from 'lucide-react'
+import { Calculator, Receipt, Building2, Landmark, BookOpenCheck, TableProperties, Scissors } from 'lucide-react'
 import FiscalRecon from './FiscalRecon'
+import Pph2326Calculator from './Pph23Calculator'
 import { PPh23Calculator, PPNCalculator, PTKPReference } from './TaxCalculators'
 
 const fmt = (n) => `Rp ${Math.round(n || 0).toLocaleString('id-ID')}`
@@ -172,6 +173,7 @@ function PtkpTool() {
 const TABS = [
   { id: 'ppn', name: 'PPN 11%', icon: Receipt, emoji: '🧾' },
   { id: 'pph21', name: 'PPh 21', icon: Calculator, emoji: '💼' },
+  { id: 'pph23', name: 'PPh 23/26', icon: Scissors, emoji: '✂️' },
   { id: 'umkm', name: 'UMKM 0,5%', icon: Building2, emoji: '🏪' },
   { id: 'recon', name: 'Rekon', icon: BookOpenCheck, emoji: '📊' },
   { id: 'ptkp', name: 'PTKP', icon: TableProperties, emoji: '📋' },
@@ -203,6 +205,7 @@ export default function ToolsHub() {
       <div className="cute-card p-4 sm:p-6">
         {tab === 'ppn' && <PpnTool />}
         {tab === 'pph21' && <Pph21Tool />}
+        {tab === 'pph23' && <Pph2326Calculator />}
         {tab === 'umkm' && <UmkmTool />}
         {tab === 'recon' && <FiscalRecon />}
         {tab === 'ptkp' && <PtkpTool />}

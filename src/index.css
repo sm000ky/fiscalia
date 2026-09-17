@@ -258,6 +258,10 @@ input[type="range"] { touch-action: pan-x; min-height: 32px; }
 .overflow-x-auto::-webkit-scrollbar-track { background: rgba(232, 93, 158, 0.08); border-radius: 3px; }
 .overflow-x-auto::-webkit-scrollbar-thumb { background: #f3a8c9; border-radius: 3px; }
 
+/* Utility: hilangkan scrollbar (menu horizontal HP-friendly) */
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; height: 0; width: 0; }
+
 @media (max-width: 640px) {
   .cute-card, .cute-card-lav, .cute-card-mint { box-shadow: 0 6px 18px rgba(232, 93, 158, 0.1); }
 }

@@ -1,88 +1,98 @@
 /**
  * Boss Monster Collection untuk TaxQuest 🎮👾
- * Setiap boss punya karakteristik unik bertema pajak
+ * Setiap boss punya karakteristik unik bertema pajak.
+ * Stage 1-3: monster reguler acak • Stage Boss: Raja Tunggakan Pajak.
  */
 
 export const bossMonsters = [
   {
-    id: 'pph21_dragon',
-    name: 'PPh 21 Dragon',
-    emoji: '🐉',
-    color: '#ff6ba8',
+    id: 'slime_ppn',
+    name: 'Slime PPN 11%',
+    emoji: '🧪',
+    color: '#4ade9f',
     hp: 100,
-    description: 'Naga penjaga penghasilan karyawan',
-    attacks: ['Potong Gaji', 'TER Blast', 'PTKP Shield'],
-    weakness: 'Tunjangan Tidak Kena Pajak',
+    stage: 'reguler',
+    description: 'Slime kenyal pemungut PPN 11% di setiap transaksi',
+    attacks: ['Faktur Pajak Spray', 'Lendir 11%', 'DPP Slime Crush'],
+    weakness: 'Faktur Pajak',
     reward: {
-      badge: 'dragon_slayer',
-      xp: 150,
-      title: 'Pemburu Naga PPh'
-    }
-  },
-  {
-    id: 'ppn_octopus',
-    name: 'PPN Octopus',
-    emoji: '🐙',
-    color: '#a770ff',
-    hp: 100,
-    description: 'Gurita 11% yang mencengkeram semua transaksi',
-    attacks: ['Faktur Pajak Spray', 'Tentacle Wrap', '11% Crush'],
-    weakness: 'Barang Tidak Kena PPN',
-    reward: {
-      badge: 'octopus_master',
-      xp: 150,
+      badge: 'slime_master',
+      xp: 100,
       title: 'Master PPN'
     }
   },
   {
-    id: 'fiscal_phoenix',
-    name: 'Fiscal Phoenix',
-    emoji: '🔥',
-    color: '#ffb347',
+    id: 'naga_denda',
+    name: 'Naga Denda Daluwarsa',
+    emoji: '🐉',
+    color: '#ff6ba8',
     hp: 100,
-    description: 'Burung api rekonsiliasi fiskal',
-    attacks: ['Koreksi Positif', 'Beda Tetap Flame', 'Beda Waktu Storm'],
+    stage: 'reguler',
+    description: 'Naga penjaga denda & daluwarsa penagihan pajak',
+    attacks: ['Denda Blast', 'Napas Daluwarsa', 'Cakar Sanksi'],
+    weakness: 'Tax Amnesty',
+    reward: {
+      badge: 'dragon_slayer',
+      xp: 120,
+      title: 'Pemburu Naga PPh'
+    }
+  },
+  {
+    id: 'phantom_audit',
+    name: 'Phantom Tax Audit',
+    emoji: '👻',
+    color: '#a770ff',
+    hp: 100,
+    stage: 'reguler',
+    description: 'Hantu audit yang gentayangan cari salah saji',
+    attacks: ['SP2D Haunt', 'Koreksi Seram', 'Jurnal Hantu'],
     weakness: 'Pembukuan Rapi',
     reward: {
-      badge: 'phoenix_tamer',
-      xp: 150,
-      title: 'Ahli Rekonsiliasi'
+      badge: 'phantom_tamer',
+      xp: 120,
+      title: 'Penakluk Audit'
     }
   },
   {
-    id: 'tax_golem',
-    name: 'Tax Golem',
-    emoji: '🗿',
-    color: '#7ac7f5',
-    hp: 100,
-    description: 'Raksasa batu pemungut pajak',
-    attacks: ['Stone Crush', 'Tax Audit', 'Penalty Slam'],
-    weakness: 'Pelaporan Tepat Waktu',
+    id: 'raja_tunggakan',
+    name: 'Raja Tunggakan Pajak',
+    emoji: '👹',
+    color: '#e63980',
+    hp: 120,
+    stage: 'boss',
+    description: 'Raja iblis tunggakan — Boss Level pamungkas!',
+    attacks: ['Tunggakan Slam', 'Bunga Iblis 2%', 'Sita Mahkota'],
+    weakness: 'Pelunasan + Surat Setoran Pajak',
     reward: {
-      badge: 'golem_crusher',
-      xp: 150,
-      title: 'Penunduk Golem'
+      badge: 'tunggakan_crusher',
+      xp: 200,
+      title: 'Penakluk Raja Tunggakan'
     }
   },
-  {
-    id: 'pkp_wizard',
-    name: 'PKP Wizard',
-    emoji: '🧙‍♂️',
-    color: '#4ade9f',
-    hp: 100,
-    description: 'Penyihir Pengusaha Kena Pajak',
-    attacks: ['Magic Invoice', 'DPP Spell', 'Faktur Illusion'],
-    weakness: 'NPWP Valid',
-    reward: {
-      badge: 'wizard_vanquisher',
-      xp: 150,
-      title: 'Penakluk Wizard'
-    }
-  }
 ]
 
 export function getRandomBoss() {
   return bossMonsters[Math.floor(Math.random() * bossMonsters.length)]
+}
+
+/** Monster reguler acak untuk stage kuis (tanpa boss final). */
+export function getRandomStageMonster() {
+  const pool = bossMonsters.filter((b) => b.stage !== 'boss')
+  return pool[Math.floor(Math.random() * pool.length)]
+}
+
+/** Boss pamungkas untuk stage akhir. */
+export function getFinalBoss() {
+  return bossMonsters.find((b) => b.stage === 'boss') || bossMonsters[bossMonsters.length - 1]
+}
+
+/**
+ * Pilih monster sesuai stage kuis: stage awal = reguler acak,
+ * stage akhir (soal >= 8 dari 10) = boss final.
+ */
+export function getMonsterForStage(questionIndex = 0, totalQuestions = 10) {
+  if (questionIndex >= totalQuestions - 3) return getFinalBoss()
+  return getRandomStageMonster()
 }
 
 export function getBossById(id) {

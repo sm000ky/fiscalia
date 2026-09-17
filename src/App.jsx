@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Sparkles, Trophy, Calculator, Wrench, BookHeart, Home, Moon, Sun } from 'lucide-react'
 import QuizArena from './components/QuizArena'
+import HeroDashboard from './components/HeroDashboard'
 import TERCalculator from './components/TERCalculator'
 import Achievements from './components/Achievements'
 import ToolsHub from './components/ToolsHub'
@@ -128,10 +129,10 @@ function App() {
         </div>
       </header>
 
-      {/* Navigation */}
-      <nav className="sticky top-[76px] sm:top-[92px] z-40 bg-white/60 backdrop-blur-md border-b border-pink-100">
-        <div className="mx-auto max-w-6xl px-4">
-          <div className="flex gap-2 overflow-x-auto py-3" style={{ WebkitOverflowScrolling: 'touch' }}>
+      {/* Navigation — horizontal scroll, no-scrollbar, pas di HP */}
+      <nav className="sticky top-[76px] sm:top-[92px] z-40 bg-white/60 backdrop-blur-md border-b border-transparent">
+        <div className="mx-auto max-w-6xl px-3 sm:px-4">
+          <div className="flex gap-2 overflow-x-auto no-scrollbar px-1 py-2.5 sm:py-3" style={{ WebkitOverflowScrolling: 'touch' }}>
             {tabs.map((tab) => {
               const Icon = tab.icon
               const active = activeTab === tab.id
@@ -155,8 +156,10 @@ function App() {
       {/* Main Content */}
       <main className="mx-auto max-w-6xl px-4 py-5 sm:py-8">
         {activeTab === 'home' && (
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="cute-card p-6 sm:p-10 pop-in">
+          <div className="max-w-4xl mx-auto">
+            <HeroDashboard />
+            <div className="text-center mt-4">
+              <div className="cute-card p-6 sm:p-8 pop-in">
               <div className="text-6xl sm:text-7xl mb-4 floaty select-none">🌺</div>
               <h2 className="font-cute text-2xl sm:text-3xl font-extrabold text-[#5b4a68] mb-2">
                 Hai, selamat datang di TaxQuest! 💕
@@ -186,6 +189,7 @@ function App() {
                   <div className="text-sm text-[#a08bb0] mt-1">{c.desc}</div>
                 </div>
               ))}
+            </div>
             </div>
           </div>
         )}

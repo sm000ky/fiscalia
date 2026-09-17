@@ -1,0 +1,26 @@
+TAXQUEST - STATUS PROYEK
+Generated: 2026-09-17 WITA (UTC+08:00)
+Lokasi lokal: /root/taxquest-app
+Production: https://taxquest-app.vercel.app
+
+1. Status Proyek: Phase 2 Completed (Build verified 1385 modules)
+- Build: vite build sukses ~35.30s, 1385 modules transformed.
+- Stack: React + Vite, tema pastel/neon, persistence localStorage-first.
+- Deploy target: Vercel.
+
+2. Modul Aktif:
+- Task 1: Pph23Calculator.jsx (Kalkulator PPh 23/26 2%/4%/15%/30%).
+  Path: src/components/Pph23Calculator.jsx, terdaftar di ToolsHub.jsx.
+  Fitur: input bruto, jenis transaksi 2% vs 15%, toggle NPWP (tanpa NPWP x2: 4%/30%), breakdown DPP/tarif efektif/potongan/netto, badge Pasal 23 UU PPh, copy result.
+- Task 2A: greetingStorage.js (108 Sapaan Lucu, Deck Shuffle, Default Nickname 'WajibPajak#69', Onboarding Modal).
+  Path: src/utils/greetingStorage.js + HeroDashboard.jsx.
+  108 sapaan: 36 Roasting Tipis + 36 Motivasi Ngawur + 36 Fakta & Quote Absurd; anti-repeat deck shuffle di localStorage; API saveUserProfile/getUserProfile/saveQuizHistory/getQuizHistory; modal "Welcome Ksatria Pajak!", nickname + edit, gacha greeting, XP/level persist saat refresh.
+- Task 2B: gameModes.js (Registry), leaderboardApi.js (Gelar RPG), PlayerCardModal.jsx (Emoji Avatar & PNG Export html2canvas), LeaderboardModal.jsx (Hybrid Leaderboard).
+  gameModes.js: Quiz Arena + Boss Battle aktif, Fiscal Race & Audit Sprint coming soon (extensible).
+  leaderboardApi.js: gelar Top 1 "Dirjen Pajak Bayangan", 2-5 "Auditor Senior Berbahaya", 6-10 "Ksatria Tax Planning", rest "Wajib Pajak Taat"; postGlobalScore() & fetchGlobalLeaderboard() fallback localStorage.
+  PlayerCardModal.jsx: kartu RPG pastel, avatar picker (5 emoji), frame glowing per level, nickname+gelar+level+XP+badges+quote, tombol Download/Share PNG via html2canvas.
+  LeaderboardModal.jsx: glassmorphism pastel, tab Quiz vs Boss Battle, klik nama = inspect PlayerCardModal; trigger Trophy + Kartu Profil di HeroDashboard.jsx & FloatingControls.jsx.
+
+3. Next Plan: Task 3 (Vercel Production Deployment & Future Game Modes).
+- Push main, verifikasi build + env, smoke test production.
+- Aktifkan Fiscal Race & Audit Sprint dari registry.

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Volume2, VolumeX, Sparkles, Music, Wand2 } from 'lucide-react'
+import { Volume2, VolumeX, Sparkles, Music, Wand2, Trophy } from 'lucide-react'
+import LeaderboardModal from './LeaderboardModal'
 
 /**
  * Floating settings button dengan mini controls 🎮✨
@@ -9,6 +10,7 @@ export default function FloatingControls() {
   const [soundEnabled, setSoundEnabled] = useState(true)
   const [cursorTrailEnabled, setCursorTrailEnabled] = useState(true)
   const [musicEnabled, setMusicEnabled] = useState(false)
+  const [showBoard, setShowBoard] = useState(false)
 
   useEffect(() => {
     // Load saved preferences
@@ -98,6 +100,15 @@ export default function FloatingControls() {
           >
             <Music size={20} />
           </button>
+
+          {/* Leaderboard shortcut */}
+          <button
+            onClick={() => setShowBoard(true)}
+            className="cute-btn cute-btn-pink w-12 h-12 flex items-center justify-center shadow-lg transition-all"
+            title="Papan peringkat"
+          >
+            <Trophy size={20} />
+          </button>
         </div>
       </div>
 
@@ -121,6 +132,8 @@ export default function FloatingControls() {
           <span className="absolute -bottom-2 -left-2 text-2xl animate-pulse" style={{ animationDelay: '1s' }}>🌸</span>
         </>
       )}
+
+      <LeaderboardModal isOpen={showBoard} onClose={() => setShowBoard(false)} initialMode="quiz" />
     </div>
   )
 }

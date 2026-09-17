@@ -3,11 +3,13 @@ import { Heart, Trophy, CheckCircle, X, Sparkles, Star } from 'lucide-react'
 import { fetchAutoQuiz } from '../utils/quizGenerator'
 import { playCorrectSound, playWrongSound, playClickSound, playComboSound } from '../utils/soundEffects'
 import { updateStats, unlockAchievement } from './Achievements'
+import { saveQuizHistory } from '../utils/greetingStorage'
+import { postGlobalScore, getPlayerAvatar } from '../utils/leaderboardApi'
 import { celebrateCorrect, celebrateCombo, celebrateVictory } from '../utils/confetti'
 import { getRandomMessage, getVictoryMessage } from '../utils/messages'
 import CuteLoading from './CuteLoading'
 import BossBattle, { BossReward } from './BossBattle'
-import { getRandomBoss } from '../data/bossMonsters'
+import { getMonsterForStage } from '../data/bossMonsters'
 
 export default function QuizArena() {
   const [gameState, setGameState] = useState('menu')
@@ -29,7 +31,8 @@ export default function QuizArena() {
 
   const startQuest = async () => {
     playClickSound()
-    const randomBoss = getRandomBoss()
+    // Stage awal: monster reguler acak bertema pajak
+    const randomBoss = getMonsterForStage(0, 10)
     setBoss(randomBoss)
     
     setQuestions([])
@@ -98,13 +101,18 @@ export default function QuizArena() {
 
   const nextQuestion = () => {
     if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1)
+      const nextIdx = currentQuestion + 1
+      // Monster bertahap: stage akhir memunculkan Boss 👹
+      setBoss(getMonsterForStage(nextIdx, questions.length))
+      setCurrentQuestion(nextIdx)
       setSelectedAnswer(null); setShowExplanation(false); setIsCorrect(null)
     } else {
       const finalScore = score
       updateStats('quiz_completed', 1)
       updateStats('high_score', finalScore)
       updateStats('max_streak', streak)
+      try { saveQuizHistory(finalScore, streak) } catch {}
+      try { postGlobalScore({ score: finalScore, mode: 'quiz', avatar: getPlayerAvatar() }) } catch {}
       try { window.dispatchEvent(new CustomEvent('taxquest:xp', { detail: { xp: finalScore } })) } catch {}
       if (bossHp === 0) {
         unlockAchievement('boss_slayer')
@@ -168,6 +176,7 @@ export default function QuizArena() {
         setShowBossReward(false)
         // Award XP
         window.dispatchEvent(new CustomEvent('taxquest:xp', { detail: { xp: boss.reward.xp } }))
+        try { postGlobalScore({ score: boss.reward.xp, mode: 'boss', avatar: getPlayerAvatar(), meta: { boss: boss.name } }) } catch {}
       }} />
     }
     
