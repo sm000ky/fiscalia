@@ -170,6 +170,7 @@ export default function PlayerCardModal({ isOpen, onClose, player }) {
 
   const downloadCard = async () => {
     try {
+      window.scrollTo(0, 0)
       // Tunggu webfont (Baloo 2 / Nunito) ready agar hasil PNG tidak fallback & berantakan
       try { await document.fonts.ready } catch { /* abaikan */ }
       await new Promise((r) => setTimeout(r, 120))
@@ -178,7 +179,7 @@ export default function PlayerCardModal({ isOpen, onClose, player }) {
       const el = cardRef.current
       if (!el) return
       const canvas = await html2canvas(el, {
-        scale: 3,
+        scale: 2,
         useCORS: true,
         backgroundColor: null,
         logging: false,
@@ -213,12 +214,12 @@ export default function PlayerCardModal({ isOpen, onClose, player }) {
         {/* ===== CARD UTAMA — target langsung export, tanpa box hitam luar ===== */}
         <div
           ref={cardRef}
-          className={`rounded-3xl p-5 text-center ${rolling ? 'animate-pulse' : ''}`}
-          style={{ background: currentPalette.bgGradient, border: '2px solid ' + currentPalette.borderColor, boxShadow: '0 0 40px ' + currentPalette.glowColor }}
+          className={`rounded-3xl p-5 text-center w-[360px] ${rolling ? 'animate-pulse' : ''}`}
+          style={{ width: 360, flexShrink: 0, background: currentPalette.bgGradient, border: '2px solid ' + currentPalette.borderColor, boxShadow: '0 0 40px ' + currentPalette.glowColor }}
         >
           {/* Header row: kiri title, kanan rank badge */}
-          <div className="flex items-center justify-between gap-2" style={{ minWidth: 0 }}>
-            <div className="text-left text-white flex-1" style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', opacity: 0.75, textShadow: '0 1px 6px rgba(0,0,0,0.8)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0 }}>
+          <div className="flex items-center justify-between gap-2 min-w-0" style={{ minWidth: 0 }}>
+            <div className="text-left text-white flex-1 whitespace-nowrap overflow-hidden text-ellipsis" style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', opacity: 0.75, textShadow: '0 1px 6px rgba(0,0,0,0.8)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0 }}>
               TAXQUEST • PLAYER CARD
             </div>
             <div
