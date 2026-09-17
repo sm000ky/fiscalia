@@ -3,6 +3,12 @@ import { X, Camera, Check, Dices } from 'lucide-react'
 import { AVATARS, getLevelFrame, getRandomTaxQuote, getRpgTitle } from '../data/gameModes'
 import { getUserProfile } from '../utils/greetingStorage'
 import { getPlayerAvatar, savePlayerAvatar, getPlayerRank } from '../utils/leaderboardApi'
+import CardTimekeeper from './CardTimekeeper'
+import CardJoker from './CardJoker'
+import CardDegen from './CardDegen'
+
+const availableTemplates = [CardTimekeeper, CardJoker, CardDegen]
+const TEMPLATE_NAMES = ['🕰️ Timekeeper', '🃏 Joker', '🤖 Degen']
 
 /* Gacha Trading Card palettes — locked hex themes */
 export const CARD_PALETTES = [
@@ -118,6 +124,24 @@ export default function PlayerCardModal({ isOpen, onClose, player }) {
   const [saved, setSaved] = useState(false)
   const [palette, setPalette] = useState(() => readPalette())
   const [rolling, setRolling] = useState(false)
+  const [templateIndex, setTemplateIndex] = useState(0)
+  const ActiveCard = availableTemplates[templateIndex] || availableTemplates[0]
+
+  const rollGacha = () => {
+    if (rolling) return
+    setRolling(true)
+    playGachaSound()
+    let ticks = 0
+    const iv = setInterval(() => {
+      setTemplateIndex(Math.floor(Math.random() * availableTemplates.length))
+      ticks += 1
+      if (ticks >= 8) {
+        clearInterval(iv)
+        setTemplateIndex(Math.floor(Math.random() * availableTemplates.length))
+        setRolling(false)
+      }
+    }, 90)
+  }
 
   if (!isOpen) return null
 
@@ -194,82 +218,35 @@ export default function PlayerCardModal({ isOpen, onClose, player }) {
     }
   }
 
+  const badgeCount = Array.isArray(badges) ? badges.length : badges
+  const playerData = {
+    name,
+    avatar,
+    level,
+    heroXP,
+    badgesCount: badgeCount,
+    quote,
+    best,
+    isSelf,
+    rankTitle: rankInfo.title,
+    rank: rankInfo.rank,
+    frameLabel: frame.label,
+    paletteName: currentPalette.name,
+  }
+
   return (
     <div
       className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm pop-in"
       onClick={onClose}
     >
       <div className="max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
-        {/* ===== CARD UTAMA — target langsung export, tanpa box hitam luar ===== */}
-        <div
-          ref={cardRef}
-          className={`rounded-3xl p-5 text-center w-[360px] ${rolling ? 'animate-pulse' : ''}`}
-          style={{ width: 360, flexShrink: 0, background: currentPalette.bgGradient, border: '2px solid ' + currentPalette.borderColor, boxShadow: '0 0 40px ' + currentPalette.glowColor }}
-        >
-          {/* Header row: kiri title, kanan rank badge */}
-          <div className="flex justify-between items-center gap-2 min-w-0" style={{ minWidth: 0 }}>
-            <div className="text-left text-white flex-1 whitespace-nowrap overflow-hidden text-ellipsis text-[10px]" style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', opacity: 0.75, textShadow: '0 1px 6px rgba(0,0,0,0.8)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0 }}>
-              TAXQUEST • PLAYER CARD
-            </div>
-            <div
-              className="flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap flex-shrink-0 shrink-0"
-              style={{ background: 'rgba(0,0,0,0.4)', border: `1px solid ${currentPalette.accent}88`, color: '#ffffff', textShadow: '0 1px 6px rgba(0,0,0,0.9)', maxWidth: '60%', overflow: 'hidden', textOverflow: 'ellipsis' }}
-            >
-              <span>👑</span>
-              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{rankInfo.title}</span>
-            </div>
-          </div>
-
-          {/* Avatar */}
-          <div
-            className="w-20 h-20 mx-auto rounded-full flex items-center justify-center text-5xl"
-            style={{ marginTop: 16, background: 'rgba(0,0,0,0.45)', border: `3px solid ${currentPalette.accent}`, boxShadow: currentPalette.glow }}
-          >
-            {avatar}
-          </div>
-
-          {/* Nickname */}
-          <h3
-            className="font-cute text-2xl font-extrabold break-words"
-            style={{ marginTop: 12, paddingBottom: 4, color: '#ffffff', textShadow: '0 2px 8px rgba(0,0,0,0.9)', lineHeight: 1.4, overflowWrap: 'anywhere', wordBreak: 'break-word', paddingLeft: 8, paddingRight: 8 }}
-          >
-            {name}
-          </h3>
-          {rankInfo.rank !== '—' && (
-            <div className="text-[11px] text-white/80" style={{ marginTop: 2, textShadow: '0 1px 6px rgba(0,0,0,0.9)' }}>
-              Peringkat #{rankInfo.rank} • Frame: {frame.label}
-            </div>
-          )}
-
-          {/* Stat grid */}
-          <div className="grid grid-cols-3 gap-2" style={{ marginTop: 14 }}>
-            {[
-              ['⭐ Level', level],
-              ['⚡ Total XP', heroXP],
-              ['🏅 Badges', Array.isArray(badges) ? badges.length : badges],
-            ].map(([l, v]) => (
-              <div
-                key={l}
-                className="text-center"
-                style={{ minHeight: 78, padding: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.45)', border: '1.5px solid rgba(255,255,255,0.18)', borderRadius: 20 }}
-              >
-                <div className="text-[11px] text-white/75">{l}</div>
-                <div className="font-cute text-lg font-extrabold" style={{ color: currentPalette.accentHex, textShadow: '0 2px 8px rgba(0,0,0,0.9)' }}>
-                  {v}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Quote box — selebar stat grid */}
-          <div className="rounded-2xl w-full" style={{ marginTop: 12, padding: '10px 16px', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.2)', overflow: 'hidden' }}>
-            <p className="text-xs text-white font-semibold" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.9)', overflowWrap: 'break-word', wordBreak: 'break-word', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-              💌 {isSelf ? quote : `Skor terbaik: ${best} poin`}
-            </p>
-          </div>
-          <div className="text-[10px] text-white/70 mt-3" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.9)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {currentPalette.name} • taxquest.vercel.app 💗
-          </div>
+        {/* ===== CARD UTAMA — Dynamic Component Rendering, target export ===== */}
+        <div ref={cardRef} className="w-[360px]" style={{ width: 360, flexShrink: 0 }}>
+          <ActiveCard data={playerData} />
+        </div>
+        {/* Indikator template aktif */}
+        <div className="text-center text-[11px] text-white/80 mt-2" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.9)' }}>
+          {TEMPLATE_NAMES[templateIndex]} • {currentPalette.name}
         </div>
 
         {/* Avatar picker (hanya untuk kartu sendiri) */}
@@ -292,12 +269,12 @@ export default function PlayerCardModal({ isOpen, onClose, player }) {
 
         <div className="flex gap-2 mt-3">
           <button
-            onClick={gachaPalette}
+            onClick={() => { gachaPalette(); rollGacha(); }}
             className="cute-btn bg-white text-[#7c5fc9] border-2 border-purple-200 px-4 py-3 text-sm flex items-center justify-center gap-2 flex-1"
             title="Kocok tema kartu"
           >
             <Dices size={16} />
-            {rolling ? 'Mengocok...' : '🎲 Gacha Frame Color'}
+            {rolling ? 'Mengocok...' : '🎲 Gacha Card Style'}
           </button>
         </div>
         <div className="flex gap-2 mt-2">
