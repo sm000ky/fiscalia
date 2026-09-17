@@ -171,28 +171,17 @@ export default function PlayerCardModal({ isOpen, onClose, player }) {
   const downloadCard = async () => {
     try {
       window.scrollTo(0, 0)
-      // Tunggu webfont (Baloo 2 / Nunito) ready agar hasil PNG tidak fallback & berantakan
-      try { await document.fonts.ready } catch { /* abaikan */ }
-      await new Promise((r) => setTimeout(r, 120))
-      const mod = await import('html2canvas')
-      const html2canvas = mod.default || mod
+      await document.fonts.ready;
+      const { toPng } = await import('html-to-image')
       const el = cardRef.current
       if (!el) return
-      const canvas = await html2canvas(el, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: null,
-        logging: false,
-        onclone: (doc) => {
-          // Paksa font eksplisit di clone agar html2canvas tidak pakai fallback serif
-          const style = doc.createElement('style')
-          style.textContent = `* { letter-spacing: normal !important; } .font-cute { font-family: 'Baloo 2','Nunito',system-ui,sans-serif !important; }`
-          doc.head.appendChild(style)
-        },
+      const dataUrl = await toPng(el, {
+        cacheBust: true,
+        pixelRatio: 3,
+        style: { margin: '0' },
       })
-      const url = canvas.toDataURL('image/png')
       const a = document.createElement('a')
-      a.href = url
+      a.href = dataUrl
       a.download = `taxquest-card-${name.replace(/[^a-zA-Z0-9_-]+/g, '_')}.png`
       document.body.appendChild(a)
       a.click()
