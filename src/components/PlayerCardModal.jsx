@@ -207,12 +207,12 @@ export default function PlayerCardModal({ isOpen, onClose, player }) {
           style={{ width: 360, flexShrink: 0, background: currentPalette.bgGradient, border: '2px solid ' + currentPalette.borderColor, boxShadow: '0 0 40px ' + currentPalette.glowColor }}
         >
           {/* Header row: kiri title, kanan rank badge */}
-          <div className="flex items-center justify-between gap-2 min-w-0" style={{ minWidth: 0 }}>
-            <div className="text-left text-white flex-1 whitespace-nowrap overflow-hidden text-ellipsis" style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', opacity: 0.75, textShadow: '0 1px 6px rgba(0,0,0,0.8)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0 }}>
+          <div className="flex justify-between items-center gap-2 min-w-0" style={{ minWidth: 0 }}>
+            <div className="text-left text-white flex-1 whitespace-nowrap overflow-hidden text-ellipsis text-[10px]" style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', opacity: 0.75, textShadow: '0 1px 6px rgba(0,0,0,0.8)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0 }}>
               TAXQUEST • PLAYER CARD
             </div>
             <div
-              className="flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap flex-shrink-0"
+              className="flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap flex-shrink-0 shrink-0"
               style={{ background: 'rgba(0,0,0,0.4)', border: `1px solid ${currentPalette.accent}88`, color: '#ffffff', textShadow: '0 1px 6px rgba(0,0,0,0.9)', maxWidth: '60%', overflow: 'hidden', textOverflow: 'ellipsis' }}
             >
               <span>👑</span>
