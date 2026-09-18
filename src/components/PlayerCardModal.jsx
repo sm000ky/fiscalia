@@ -127,23 +127,22 @@ export default function PlayerCardModal({ isOpen, onClose, player }) {
   const [saved, setSaved] = useState(false)
   const [palette, setPalette] = useState(() => readPalette())
   const [rolling, setRolling] = useState(false)
+  const [isRolling, setIsRolling] = useState(false)
   const [templateIndex, setTemplateIndex] = useState(0)
   const ActiveCard = availableTemplates[templateIndex] || availableTemplates[0]
 
   const rollGacha = () => {
-    if (rolling) return
-    setRolling(true)
+    if (isRolling) return
+    setIsRolling(true)
     playGachaSound()
-    let ticks = 0
     const iv = setInterval(() => {
       setTemplateIndex(Math.floor(Math.random() * availableTemplates.length))
-      ticks += 1
-      if (ticks >= 8) {
-        clearInterval(iv)
-        setTemplateIndex(Math.floor(Math.random() * availableTemplates.length))
-        setRolling(false)
-      }
-    }, 90)
+    }, 100)
+    setTimeout(() => {
+      clearInterval(iv)
+      setTemplateIndex(Math.floor(Math.random() * availableTemplates.length))
+      setIsRolling(false)
+    }, 1200)
   }
 
   if (!isOpen) return null
@@ -244,7 +243,7 @@ export default function PlayerCardModal({ isOpen, onClose, player }) {
     >
       <div className="max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
         {/* ===== CARD UTAMA — Dynamic Component Rendering, target export ===== */}
-        <div ref={cardRef} className="w-[360px]" style={{ width: 360, flexShrink: 0 }}>
+        <div ref={cardRef} className={`w-[360px] ${isRolling ? 'scale-95 opacity-75 animate-pulse transition-all duration-100' : 'scale-100 opacity-100 transition-all duration-500'}`} style={{ width: 360, flexShrink: 0 }}>
           <ActiveCard data={playerData} />
         </div>
         {/* Indikator template aktif */}
@@ -273,11 +272,12 @@ export default function PlayerCardModal({ isOpen, onClose, player }) {
         <div className="flex gap-2 mt-3">
           <button
             onClick={() => { gachaPalette(); rollGacha(); }}
-            className="cute-btn bg-white text-[#7c5fc9] border-2 border-purple-200 px-4 py-3 text-sm flex items-center justify-center gap-2 flex-1"
+            disabled={isRolling || rolling}
+            className="cute-btn bg-white text-[#7c5fc9] border-2 border-purple-200 px-4 py-3 text-sm flex items-center justify-center gap-2 flex-1 disabled:opacity-60"
             title="Kocok tema kartu"
           >
             <Dices size={16} />
-            {rolling ? 'Mengocok...' : '🎲 Gacha Card Style'}
+            {(isRolling || rolling) ? 'Mengocok...' : '🎲 Gacha Card Style'}
           </button>
         </div>
         <div className="flex gap-2 mt-2">
