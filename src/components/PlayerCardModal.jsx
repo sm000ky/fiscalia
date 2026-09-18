@@ -242,9 +242,11 @@ export default function PlayerCardModal({ isOpen, onClose, player }) {
       onClick={onClose}
     >
       <div className="max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
-        {/* ===== CARD UTAMA — Dynamic Component Rendering, target export ===== */}
-        <div ref={cardRef} className={`w-[360px] ${isRolling ? 'scale-95 opacity-75 animate-pulse transition-all duration-100' : 'scale-100 opacity-100 transition-all duration-500'}`} style={{ width: 360, flexShrink: 0 }}>
-          <ActiveCard data={playerData} />
+        {/* ===== CARD UTAMA — ref bersih untuk download, animasi hanya di inner ===== */}
+        <div ref={cardRef} className="w-[360px]" style={{ width: 360, flexShrink: 0 }}>
+          <div className={isRolling ? 'scale-95 opacity-70 animate-pulse transition-all duration-100' : 'scale-100 opacity-100 transition-all duration-500'}>
+            <ActiveCard data={playerData} />
+          </div>
         </div>
         {/* Indikator template aktif */}
         <div className="text-center text-[11px] text-white/80 mt-2" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.9)' }}>
