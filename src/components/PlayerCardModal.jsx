@@ -242,9 +242,9 @@ export default function PlayerCardModal({ isOpen, onClose, player }) {
       onClick={onClose}
     >
       <div className="max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
-        {/* ===== CARD UTAMA — ref bersih untuk download, animasi hanya di inner ===== */}
-        <div ref={cardRef} className="w-[360px]" style={{ width: 360, flexShrink: 0 }}>
-          <div className={isRolling ? 'scale-95 opacity-70 animate-pulse transition-all duration-100' : 'scale-100 opacity-100 transition-all duration-500'}>
+        {/* ===== WRAPPER KAKU anti layout-shift + summoning effect ===== */}
+        <div className="w-[360px] h-[480px] flex items-center justify-center relative" style={{ width: 360, height: 480, flexShrink: 0 }}>
+          <div ref={cardRef} className={`w-[360px] ${isRolling ? 'scale-90 blur-[2px] brightness-125 -rotate-2 transition-all duration-150' : 'scale-100 blur-0 brightness-100 rotate-0 transition-all duration-500 ease-out'}`} style={{ width: 360, flexShrink: 0 }}>
             <ActiveCard data={playerData} />
           </div>
         </div>
