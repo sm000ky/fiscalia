@@ -6,9 +6,12 @@ import { getPlayerAvatar, savePlayerAvatar, getPlayerRank } from '../utils/leade
 import CardTimekeeper from './CardTimekeeper'
 import CardJoker from './CardJoker'
 import CardDegen from './CardDegen'
+import CardPersona from './CardPersona'
+import CardKawaii from './CardKawaii'
+import CardPastelMinimalist from './CardPastelMinimalist'
 
-const availableTemplates = [CardTimekeeper, CardJoker, CardDegen]
-const TEMPLATE_NAMES = ['🕰️ Timekeeper', '🃏 Joker', '🤖 Degen']
+const availableTemplates = [CardTimekeeper, CardJoker, CardDegen, CardPersona, CardKawaii, CardPastelMinimalist]
+const TEMPLATE_NAMES = ['🕰️ Timekeeper', '🃏 Joker', '🤖 Degen', '⚡ Persona', '🌸 Kawaii', '🍃 Minimalist']
 
 /* Gacha Trading Card palettes — locked hex themes */
 export const CARD_PALETTES = [
