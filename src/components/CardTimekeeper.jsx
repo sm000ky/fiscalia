@@ -62,9 +62,13 @@ export default function CardTimekeeper({ data = {} }) {
       >
         {name}
       </h3>
-      {rank !== '—' && (
+      {rank !== '—' ? (
         <div style={{ marginTop: 2, color: '#e8d5a3', fontSize: 11, letterSpacing: '0.12em' }}>
-          No. {rank} • {frameLabel}
+          No. {rank} • RESTORING THE TAX ERA
+        </div>
+      ) : (
+        <div style={{ marginTop: 2, color: '#e8d5a3', fontSize: 11, letterSpacing: '0.12em' }}>
+          RESTORING THE TAX ERA
         </div>
       )}
 
@@ -89,7 +93,7 @@ export default function CardTimekeeper({ data = {} }) {
         </p>
       </div>
       <div className="whitespace-nowrap overflow-hidden text-ellipsis" style={{ marginTop: 10, color: '#cbb26a', fontSize: 10, letterSpacing: '0.18em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-        TIMEKEEPER • taxquest.vercel.app
+        ◈ taxquest.vercel.app
       </div>
     </div>
   )

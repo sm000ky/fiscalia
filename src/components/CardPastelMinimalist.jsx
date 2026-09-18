@@ -40,7 +40,7 @@ export default function CardPastelMinimalist({ data = {} }) {
       </h3>
       {rank !== '—' && (
         <div className="whitespace-nowrap overflow-hidden text-ellipsis" style={{ marginTop: 6, color: '#a09a8a', fontSize: 11, letterSpacing: '0.14em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-          Nº {rank} — {frameLabel}
+          Nº {rank} — CALM & COMPLIANT
         </div>
       )}
 
@@ -65,7 +65,7 @@ export default function CardPastelMinimalist({ data = {} }) {
         </p>
       </div>
       <div className="whitespace-nowrap overflow-hidden text-ellipsis" style={{ marginTop: 24, color: '#c4bcab', fontSize: 10, letterSpacing: '0.24em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-        MINIMAL • taxquest.vercel.app
+        ✦ taxquest.vercel.app
       </div>
     </div>
   )

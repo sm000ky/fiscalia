@@ -42,7 +42,7 @@ export default function CardPersona({ data = {} }) {
               {name}
             </h3>
             <div className="whitespace-nowrap overflow-hidden text-ellipsis" style={{ color: '#ffe600', fontSize: 11, fontWeight: 900, fontStyle: 'italic', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {rank !== '—' ? `RANK #${rank} // ${frameLabel}` : `${frameLabel} TAKE YOUR HEART`}!
+              {rank !== '—' ? `RANK #${rank} // PHANTOM THIEVES OF TAXES` : 'PHANTOM THIEVES OF TAXES'}!
             </div>
           </div>
         </div>
@@ -68,7 +68,7 @@ export default function CardPersona({ data = {} }) {
           </p>
         </div>
         <div className="whitespace-nowrap overflow-hidden text-ellipsis" style={{ marginTop: 10, color: '#fff', fontSize: 10, fontWeight: 900, fontStyle: 'italic', textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-          PERSONA // taxquest.vercel.app ⚡
+          ⚡ taxquest.vercel.app
         </div>
       </div>
       {/* strip bawah */}

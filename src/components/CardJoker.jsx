@@ -66,9 +66,9 @@ export default function CardJoker({ data = {} }) {
         </h3>
         <span style={{ color: '#e63946', fontSize: 22, fontWeight: 900 }}>♥</span>
       </div>
-      {rank !== '—' && (
+      {(rank !== '—' || true) && (
         <div className="whitespace-nowrap overflow-hidden text-ellipsis" style={{ marginTop: 2, color: '#f1fa8c', fontSize: 11, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-          RANK #{rank} • {frameLabel} • 1X BET
+          {rank !== '—' ? `RANK #${rank} • ALL IN ON TAXES` : 'ALL IN ON TAXES'}
         </div>
       )}
 
@@ -93,7 +93,7 @@ export default function CardJoker({ data = {} }) {
         </p>
       </div>
       <div className="whitespace-nowrap overflow-hidden text-ellipsis" style={{ marginTop: 8, color: '#8a8a93', fontSize: 10, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-        JOKER EDITION • taxquest.vercel.app
+        ♠ taxquest.vercel.app ♥
       </div>
     </div>
   )

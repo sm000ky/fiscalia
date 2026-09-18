@@ -65,7 +65,7 @@ export default function CardDegen({ data = {} }) {
             {name}
           </h3>
           <div className="whitespace-nowrap overflow-hidden text-ellipsis" style={{ color: '#9be9ff', fontSize: 11, marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {rank !== '—' ? `RANK #${rank} // ${frameLabel}` : `// ${frameLabel} MODE`} • LV {level}
+            {rank !== '—' ? `RANK #${rank} // DECENTRALIZED TAXPAYER` : 'DECENTRALIZED TAXPAYER'} • LV {level}
           </div>
           <div style={{ marginTop: 6, height: 6, background: 'rgba(255,255,255,0.1)', borderRadius: 999, overflow: 'hidden' }}>
             <div style={{ width: `${Math.min(100, (heroXP % 1000) / 10)}%`, height: '100%', background: 'linear-gradient(90deg, #00e5ff, #b24bf3)', boxShadow: '0 0 10px #00e5ff' }} />
@@ -108,7 +108,7 @@ export default function CardDegen({ data = {} }) {
         </p>
       </div>
       <div className="whitespace-nowrap overflow-hidden text-ellipsis" style={{ marginTop: 10, color: '#5b6b8c', fontSize: 10, textAlign: 'right', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', position: 'relative' }}>
-        DEGEN // taxquest.vercel.app ⬢
+        ⬢ taxquest.vercel.app
       </div>
     </div>
   )

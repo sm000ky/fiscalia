@@ -40,7 +40,7 @@ export default function CardKawaii({ data = {} }) {
       </h3>
       {rank !== '—' && (
         <div className="whitespace-nowrap overflow-hidden text-ellipsis" style={{ marginTop: 2, color: '#a770ff', fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-          ✿ Rank #{rank} • {frameLabel} ✿
+          ✿ Rank #{rank} • SPARKLING TAX CUTIE ✿
         </div>
       )}
 
@@ -65,7 +65,7 @@ export default function CardKawaii({ data = {} }) {
         </p>
       </div>
       <div className="whitespace-nowrap overflow-hidden text-ellipsis" style={{ marginTop: 10, color: '#c49ac9', fontSize: 10, fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-        kawaii • taxquest.vercel.app 💗
+        💗 taxquest.vercel.app
       </div>
     </div>
   )
