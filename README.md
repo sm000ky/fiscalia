@@ -1,24 +1,24 @@
 <div align="center">
 
-# 🎮 TaxQuest
-### Gamified Indonesian Tax & Accounting Educational RPG
+# 🏛️ FISCALIA
+### Interactive Indonesian Tax & Fiscal Simulation Suite
 
 [![React 18](https://img.shields.io/badge/React-18.2-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-5.x-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-F59E0B?style=for-the-badge)](LICENSE)
-[![Author: sm000ky](https://img.shields.io/badge/Author-sm000ky-FF3366?style=for-the-badge&logo=github)](https://github.com/sm000ky)
+[![Authors: sm000ky & Zero Two](https://img.shields.io/badge/Crafted_by-sm000ky_%26_Zero_Two-FF3366?style=for-the-badge&logo=github)](https://github.com/sm000ky)
 
 <p align="center">
-  <b>Petualangan RPG interaktif bertema pastel cute untuk mahasiswa & praktisi akuntansi perpajakan Indonesia. Belajar pajak, hitung TER PPh 21, dan taklukkan fiskus tanpa stres!</b>
+  <b>Platform edukasi, simulasi fiskal, dan eksplorasi perpajakan Indonesia interaktif berkonsep gamifikasi visual. Mengubah kerumitan pasal perpajakan menjadi pengalaman belajar yang intuitif, menyenangkan, dan berbobot.</b>
 </p>
 
 ```
-  ⚔️ TAXQUEST // ACADEMY LEVEL 99
+  🏛️ FISCALIA // ACADEMY PROTOCOL
   ======================================================
-  [HERO] Fiskus Paladin   •   [CLASS] Senior Tax Auditor
-  [MANA] 100/100         •   [NGANTUK METER] 12%
-  [MISSION] Selesaikan Kuis AI & Taklukkan Rekon Fiskal!
+  [MODUL] KALKULATOR PPH 21 TER • PPN 11% • REKON FISKAL
+  [ARENA] QUIZ ENGINE DINAMIS • STUDI KASUS BREVET / USKP
+  [STATUS] REGULASI TERBARU PP 58/2023 & UU HPP AKTIF
   ======================================================
 ```
 
@@ -26,44 +26,44 @@
 
 ---
 
-## 📖 Apa itu TaxQuest?
+## 📖 Apa itu Fiscalia?
 
-Perpajakan dan akuntansi sering dianggap kaku, rumit, dan penuh pasal memusingkan. **TaxQuest** mengubah paradigma tersebut dengan memadukan kurikulum perpajakan resmi Indonesia (UU HPP, skema TER PP 58/2023, PPh Badan, PPN 11%) ke dalam format **RPG Gamification** yang seru, interaktif, dan penuh humor relevan khas mahasiswa akuntansi.
+Perpajakan Indonesia sarat dengan perubahan regulasi yang dinamis dan formula perhitungan bertingkat. **Fiscalia** dirancang untuk menjembatani teori perpajakan dan praktik profesional secara visual. 
 
-## ✨ Fitur Unggulan
+Melalui kombinasi modul kalkulator komprehensif, simulasi rekonsiliasi fiskal, dan arena kuis dinamis, Fiscalia mempermudah pemahaman konsep perpajakan Indonesia secara runtut dan aplikatif.
 
-### 1. 🏰 Hero Base & Karakter RPG
-- **Profil Interaktif:** Pantau level akun, title keahlian pajak, status Mana, dan *Ngantuk Meter* kocak.
-- **Daily Humor & Quotes Pajak:** Kutipan motivasi dan komedi harian seputar dunia auditor dan konsultan pajak.
-- **Kartu Identitas Mahasiswa Pajak:** 6 varian kartu koleksi aesthetic (*Timekeeper, Joker, Degen, Persona, Kawaii, Minimalist*) siap ekspor ke PNG.
+## ✨ Fitur & Modul Utama
 
-### 2. 🧮 Kalkulator Pajak Indonesia Terkini
-- **Kalkulator PPh 21 TER (PP 58/2023):** Simulasi perhitungan tarif efektif rata-rata Kategori A/B/C, perbandingan potongan Januari–November vs Desember, serta simulasi Take Home Pay.
-- **Kalkulator PPN 11% & PPnBM:** Hitung DPP, PPN terutang, dan faktur pajak masukan/keluaran secara instan.
-- **Kalkulator PPh Final UMKM (0,5%):** Simulasi omzet di bawah batas bebas pajak Rp 500 juta sesuai UU HPP.
-- **Simulasi Rekonsiliasi Fiskal:** Koreksi positif dan negatif biaya komersial ke biaya fiskal dengan visualisasi grafik interaktif.
+### 1. 🧮 Simulator Pajak Indonesia Terpadu
+- **Kalkulator PPh 21 TER (PP 58/2023):** Hitung otomatis Tarif Efektif Rata-Rata Kategori A, B, dan C. Menampilkan komparasi rinci potongan bulanan (Januari–November) terhadap perhitungan final bulan Desember beserta Take Home Pay.
+- **Kalkulator PPN 11% & PPnBM:** Penentuan DPP nilai lain, PPN terutang, dan manajemen faktur masukan/keluaran.
+- **Kalkulator PPh Final UMKM (0,5%):** Simulasi batas omzet tidak kena pajak Rp 500 Juta sesuai UU HPP.
+- **Visualizer Rekonsiliasi Fiskal:** Analisis beda tetap dan beda waktu untuk penyesuaian laba komersial ke laba fiskal.
 
-### 3. ⚔️ Quiz Arena & AI Question Generator
-- **Kuis Studi Kasus:** Tantangan soal berbasis waktu seputar Brevet A/B dan USKP.
-- **AI Quiz Engine:** Terhubung dengan backend API untuk menghasilkan soal studi kasus perpajakan dinamis tanpa batas pengulangan.
-- **Sistem Kombo & Lencana:** Kumpulkan poin EXP, raih streak jawaban benar, dan buka lencana kehormatan akuntan.
+### 2. ⚔️ Academic Quiz Arena & AI Engine
+- **Studi Kasus Ujian Pajak:** Bank soal terstruktur mencakup topik Brevet A/B dan USKP (Ujian Sertifikasi Konsultan Pajak).
+- **AI Generator Terkoneksi:** Integrasi endpoint serverless untuk meracik soal studi kasus kontekstual secara dinamis.
+- **Sistem Evaluasi Interaktif:** Skor prediktif, kombo jawaban benar, dan pembahasan runtut tiap nomor.
+
+### 3. 🎴 Digital Student Identity & Card Generator
+- **6 Varian Kartu Spesialisasi:** *Timekeeper, Joker, Degen, Persona, Kawaii,* dan *Minimalist*.
+- **Eksport Beresolusi Tinggi:** Menggunakan render kanvas murni untuk menghasilkan kartu identitas belajar format PNG siap simpan.
 
 ## 🛠️ Tech Stack
 
-- **Framework:** React 18 + Vite
-- **Styling:** Tailwind CSS (Tema Pastel Cute & Dark Mode)
-- **Visuals & Exports:** HTML-to-Image Canvas + Confetti Particles
+- **Frontend:** React 18 + Vite
+- **Styling:** Tailwind CSS (Tema Pastel Elegant & Dark Mode)
+- **Rendering:** HTML-to-Image Canvas + Confetti Particles
 - **Icons:** Lucide React
-- **Engine AI:** Serverless API Connector untuk kuis dinamis
 
-## 🏁 Cara Menjalankan
+## 🏁 Menjalankan Proyek
 
 ```bash
 # Clone repository
-git clone https://github.com/sm000ky/taxquest.git
+git clone https://github.com/sm000ky/fiscalia.git
 
 # Masuk ke direktori
-cd taxquest
+cd fiscalia
 
 # Install dependensi
 npm install
@@ -72,14 +72,17 @@ npm install
 npm run dev
 ```
 
-Buka `http://localhost:5173` di browser kamu.
+Kunjungi `http://localhost:5173` di peramban kamu.
 
-## 👤 Pembuat
+## 👥 Authors & Contributors
 
-Dibuat dan dikembangkan oleh **sm000ky** ([@sm000ky](https://github.com/sm000ky)).
+| Kontributor | Peran |
+|---|---|
+| [**sm000ky**](https://github.com/sm000ky) | Vision, System Architecture & Lead Developer |
+| **Zero Two** (`002`) | Autonomous Engine Co-Pilot & UI Engineering |
 
 ---
 
 <div align="center">
-  <sub>Pajak itu penting, belajar pajak itu seru. Mari taklukkan dunia akuntansi bersama TaxQuest! 💗</sub>
+  <sub>Pahami aturan, hitung dengan tepat, dan kuasai perpajakan bersama Fiscalia. 🏛️✨</sub>
 </div>
